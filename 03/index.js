@@ -43,9 +43,7 @@ const offset = num => {
     )(num);
 };
 
-const p1 = compose(sum, applySpec([level, offset]));
-
-console.log(p1(347991));
+const p1 = compose(sum, applySpec([level, offset]), Number);
 
 const nextX = ({ x, y, l }) => {
     if (y === -l) { return x + 1; }
@@ -86,10 +84,11 @@ const sumAdjacent = (square, mp) => compose(
 )(square);
 
 const p2 = val => {
+    let valNum = Number(val);
     let mp = { '0,0': 1 };
     let curSquare = { x: 0, y: 0, l: 0 };
     
-    while(valAt(curSquare, mp) <= val) {
+    while(valAt(curSquare, mp) <= valNum) {
         curSquare = nextSquare(curSquare);
         mp[propAt(curSquare)] = sumAdjacent(curSquare, mp);
     }
@@ -104,6 +103,5 @@ module.exports = {
     , propAt
     , valAt
     , nextSquare
-    , p1
-    , p2
+    , ps: [p1, p2]
 };

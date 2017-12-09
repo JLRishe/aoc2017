@@ -1,7 +1,7 @@
 const assert = require('assert');
 const { curry } = require('ramda');
-const { level, offset, p1, p2 } = require('../03');
-
+const { ps, level, offset } = require('../03');
+const [p1, p2] = ps;
 
 describe('day 3', () => {
     it('should calculate level', () => {

@@ -1,5 +1,6 @@
 const assert = require('assert');
-const { nextIdx, p1, p2 } = require('../01');
+const { ps, nextIdx } = require('../01');
+const [p1, p2] = ps;
 
 describe('day 1', () => {
     it('should return next index', () => {

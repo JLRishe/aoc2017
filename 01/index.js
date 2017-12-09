@@ -14,12 +14,9 @@ const p1 = sumMatchedIdx(nextIdx);
 
 const p2 = sumMatchedIdx(halfIdx);
 
-run('01', p1, p2);
-
 
 module.exports = {
     nextIdx
     , eqNextIdx
-    , p1
-    , p2
+    , ps: [p1, p2]
 }

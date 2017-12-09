@@ -25,6 +25,8 @@ const runLines = (folder, ...exercises) =>
     
 const toArray = val => Array.from(val);
 
+const tokenize = split(/\s+/);
+
 const arrayMap = curry((f, arr) => toArray(arr).map(f));
 
 const probe = val => (console.log(val), val);
@@ -37,6 +39,7 @@ module.exports = {
     , run
     , runLines
     , probe
+    , tokenize
     , toArray
     , arrayMap
 };

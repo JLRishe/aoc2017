@@ -1,5 +1,5 @@
 const fs = require('fs');
-const { compose, curry, map, applyTo, forEach, call, replace, split } = require('ramda');
+const { __, compose, curry, map, applyTo, forEach, call, replace, split } = require('ramda');
 
 const loadFile = (path, cb) => fs.readFile(path, 'utf8', (err, contents) => {
     if (err) { console.log(err); } else { cb(contents); }
@@ -11,9 +11,15 @@ const loadInput = (folder, cb) => loadFile(`${folder}/input.txt`, cb);
 
 const log = (...vals) => console.log.apply(console, vals);
 
-const runAndLog = f => compose(log, call(f));
+const timestamp = val => (console.log(new Date()),val);
 
-const runExercises = curry((exercises, input) => compose(forEach(log), map(applyTo(input)))(exercises));
+const runExercise = curry((exercise, input) =>
+    compose(timestamp, log, applyTo(input), timestamp)(exercise)
+);
+
+const runExercises = curry((exercises, input) => 
+    forEach(runExercise(__, input), exercises
+));
 
 const run = (folder, ...exercises) =>  
     loadInput(folder, compose(runExercises(exercises), trimEnd));

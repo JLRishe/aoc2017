@@ -1,0 +1,10 @@
+const { __, compose map, filter } = require('ramda');
+const { } = require('../shared');
+
+const p1 = () => 0;
+
+const p2 = () => 0;
+
+module.exports = {
+    ps: [p1, p2]
+};

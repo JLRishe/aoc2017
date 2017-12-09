@@ -35,6 +35,8 @@ const tokenize = split(/\s+/);
 
 const arrayMap = curry((f, arr) => toArray(arr).map(f));
 
+const applyPattern = curry((regex, str) => regex.exec(str));
+
 const probe = val => (console.log(val), val);
 
 module.exports = {
@@ -46,6 +48,7 @@ module.exports = {
     , runLines
     , probe
     , tokenize
+    , applyPattern
     , toArray
     , arrayMap
 };

@@ -12,9 +12,6 @@ describe(`day ${day}`, () => {
         'c dec -10 if a >= 1',
         'c inc -20 if c == 10'
     ];
-
-    
-    
     
     const expectedParsed = [
         { reg: 'b', op: add,      amt: 5,   cReg: 'a', comp: gt,     val: 1  },

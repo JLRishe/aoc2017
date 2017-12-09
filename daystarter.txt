@@ -1,4 +1,4 @@
-const { __, compose map, filter } = require('ramda');
+const { __, compose, map, filter } = require('ramda');
 const { } = require('../shared');
 
 const p1 = () => 0;

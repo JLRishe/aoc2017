@@ -1,9 +1,7 @@
 const { __, compose, map, filter, add, subtract, lt, gt, lte, gte, equals, complement, reduce, when, curry, isNil, always, apply, values, prop, merge, max } = require('ramda');
-const { probe } = require('../shared');
+const { probe, applyPattern } = require('../shared');
 
 const instrucPattern = /([a-z]+) (inc|dec) (-?\d+) if ([a-z]+) ([<>=!]+) (-?\d+)/;
-
-const applyPattern = str => instrucPattern.exec(str);
 
 const ops = { inc: add, dec: subtract };
 
@@ -25,7 +23,7 @@ const instrucPartsToObj = ([_, reg, op, amt, cReg, comp, val]) => ({
     val: Number(val) 
 });
 
-const parseInstruc = compose(instrucPartsToObj, applyPattern);
+const parseInstruc = compose(instrucPartsToObj, applyPattern(instrucPattern));
 
 const regValue = name => compose(when(isNil, always(0)), prop(name));
 

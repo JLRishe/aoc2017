@@ -25,10 +25,18 @@ const runLines = (folder, ...exercises) =>
     
 const toArray = val => Array.from(val);
 
+const arrayMap = curry((f, arr) => toArray(arr).map(f));
+
+const probe = val => (console.log(val), val);
+
 module.exports = {
     loadFile
     , loadInput
     , trimEnd
+    , splitLines
     , run
+    , runLines
+    , probe
     , toArray
+    , arrayMap
 };

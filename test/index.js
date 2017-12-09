@@ -1,5 +1,5 @@
 const assert = require('assert');
-const { loadFile, loadInput, trimEnd } = require('../shared');
+const { loadFile, loadInput, trimEnd, splitLines } = require('../shared');
 
 
 describe('shared', () => {
@@ -19,5 +19,9 @@ describe('shared', () => {
     
     it('should trim ends', () => {
         assert.equal(trimEnd('a\nb\n'), 'a\nb');
+    });
+    
+    it('should split lines', () =>  {
+        assert.equal(splitLines('a\r\nb\rc\nla\r\nyo').length, 5);
     });
 });

@@ -31,6 +31,6 @@ describe(`day ${day}`, () => {
     });
     
     it('should work on samples for p2', () => {
-        throw new Error('not implemented');
+        assert.equal(p2(programStrings), 60);
     });
 });

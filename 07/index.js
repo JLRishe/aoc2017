@@ -1,5 +1,5 @@
 const ramda = require('ramda');
-const { __, compose, map, filter, curry, split, ifElse, always, isNil, any, contains, complement, find, indexBy, prop, sum, groupBy, values, when, equals, length, sortBy, head, tail } = ramda;
+const { __, compose, map, filter, curry, split, ifElse, always, isNil, any, contains, complement, find, indexBy, prop, sum, groupBy, values, when, equals, length, sortBy, head, tail, gt } = ramda;
 const { add, subtract } = ramda;
 const { probe, applyPattern } = require('../shared');
 
@@ -35,20 +35,26 @@ const buildTree = curry((programIndex, name) => {
 
 const childGroups = compose(values, groupBy(totWeight));
 
-const single = compose(equals(1), length);
+const moreThan1 = compose(gt(__, 1), length);
 
-const findUnbalancedDisc = tree => {
-    const children = prop('children', tree);
-    const cg = childGroups(children);
-    
-    return single(cg)
-        ? compose(head, filter(complement(isNil)), probe, map(findUnbalancedDisc))(children)
-        : tree;
-};
+const children = prop('children');
+
+const isUnbalanced = compose(
+    moreThan1,
+    childGroups,
+    children
+);
+
+const findUnbalancedDisc = tree => 
+    compose(
+        head, 
+        filter(isUnbalanced), 
+        filter(complement(isNil)),
+    )([...map(findUnbalancedDisc, children(tree)), tree]);
 
 const findNeededWeight = unbalancedDisc => {
-    const children = prop('children', unbalancedDisc);
-    const cg = compose(sortBy(length), childGroups)(children);
+    const chl = children(unbalancedDisc);
+    const cg = compose(sortBy(length), childGroups)(chl);
     const badDisc = head(head(cg));
     const diff = subtract(
         compose(totWeight, head, head, tail)(cg), 

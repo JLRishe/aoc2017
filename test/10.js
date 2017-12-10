@@ -1,7 +1,7 @@
 const day = '10';
 
 const assert = require('assert');
-const { ps, rotate, adjustRope, updatePos, applyLengths, run } = require(`../${day}`);
+const { ps, rotate, adjustRope, updatePos, applyLengths, run, toHex } = require(`../${day}`);
 const [p1, p2] = ps;
 
 describe(`day ${day}`, () => {
@@ -28,18 +28,23 @@ describe(`day ${day}`, () => {
     });
     
     it('should apply lengths', () => {
-        assert.deepEqual(applyLengths([0, 1, 2, 3, 4], [3, 4, 1, 5]), { rope: [3, 4, 2, 1, 0], curPos: 4, skipSize: 4 });
+        assert.deepEqual(
+            applyLengths({ rope: [0, 1, 2, 3, 4], curPos: 0, skipSize: 0 }, [3, 4, 1, 5]), 
+            { rope: [3, 4, 2, 1, 0], curPos: 4, skipSize: 4 });
     });
     
     it('should run', () => {
         assert.equal(run(5)('3,4,1,5'), 12);
     });
-    
-    it('should work on samples for p1', () => {
-        
+
+    it('should pad hex', () => {
+        assert.equal(toHex(0xf), '0f');
+        assert.equal(toHex(0), '00');
+        assert.equal(toHex(0xff), 'ff');
     });
     
     it('should work on samples for p2', () => {
-        throw new Error('not implemented');
+        assert.equal(p2(''),         'a2582a3a0e66e6e86e3812dcb672a272');
+        assert.equal(p2('AoC 2017'), '33efeb34ea91902bb2f59c9920caa6cd');
     });
 });

@@ -1,5 +1,5 @@
 const assert = require('assert');
-const { loadFile, loadInput, trimEnd, splitLines } = require('../shared');
+const { loadFile, loadInput, trimEnd, splitLines } = require('../shared/runhelpers');
 
 
 describe('shared', () => {

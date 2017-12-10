@@ -2,14 +2,7 @@ const ramda = require('ramda');
 const { __, compose, map, filter, reduce, curry, identity, partial,applySpec } = ramda;
 const { take, drop, length, reverse, prop, split, head, tail, call, times, splitEvery, join, repeat, concat } = ramda;
 const { min, max, add, mathMod, multiply } = ramda;
-const { probe, tokenize } = require('../shared');
-
-const rotate = curry((count, arr) => {
-    const len = length(arr);
-    const offset = len - mathMod(count, len);
-    
-    return [...drop(offset, arr), ...take(offset, arr)];
-});
+const { probe, tokenize, rotate } = require('../shared');
 
 const reverseN = curry((n, arr) => [...reverse(take(n, arr)), ...drop(n, arr)])
 

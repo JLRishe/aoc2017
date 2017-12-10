@@ -1,7 +1,5 @@
 const { __, when, map, add, ifElse, gte, adjust } = require('ramda');
-const { arrayMap } = require('../shared');
-
-const add1 = add(1);
+const { arrayMap, add1 } = require('../shared');
 
 const nextWorld = jumpAdjust => ({ is, i }) => ({
     is: adjust(jumpAdjust, i, is),

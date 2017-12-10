@@ -18,8 +18,8 @@ describe(`day ${day}`, () => {
     });
     
     it('should parse strings', () => {
-        assert.deepEqual(parseStr('{{}}'), { type: 'root', children: [{ children: [empty], garbage: 0 }] });
-        assert.deepEqual(parseStr('{{},{},{},{}}'), { type: 'root', children: [{ children: [empty, empty, empty, empty], garbage: 0 }] });
+        assert.deepEqual(parseStr('{{}}'), { type: 'root', children: [{ children: [empty], garbage: 0 }], garbage: 0 });
+        assert.deepEqual(parseStr('{{},{},{},{}}'), { type: 'root', children: [{ children: [empty, empty, empty, empty], garbage: 0 }], garbage: 0 });
     });
     
     it('should compute values', () => {
@@ -34,6 +34,7 @@ describe(`day ${day}`, () => {
     });
     
     it('should work on samples for p2', () => {
-        throw new Error('not implemented');
+        assert.equal(p2('{{<ab>},{<ab>},{<ab>},{<ab>}}'), 8);
+        assert.equal(p2('{{<a!>},{<a!>},{<a!>},{<ab>}}'), 17);
     });
 });

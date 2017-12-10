@@ -19,13 +19,13 @@ const parseGroup = (state, ch) => {
     }
 };
 
-const addGarbage = (obj) => merge(obj, { garbage: obj.garbage + 1 });
+const addGarbage = (obj, amt) => merge(obj, { garbage: obj.garbage + amt });
 
 const parseGarbage = (state, ch) => {
     switch (ch) {
-        case '>': return addGarbage(state.parent);
+        case '>': return addGarbage(state.parent, state.garbage);
         case '!': return { type: 'ignore', parent: state };
-        default:  return addGarbage(state);
+        default:  return addGarbage(state, 1);
     }
 };
 
@@ -43,7 +43,7 @@ const parseChar = (state, ch) => {
     }
 };
 
-const parseStr = reduce(parseChar, { type: 'root', children: [] });
+const parseStr = reduce(parseChar, { type: 'root', children: [], garbage: 0 });
 
 const totalValues = curry((val, node) => 
     val + compose(sum, map(totalValues(val + 1)))(node.children)
@@ -54,7 +54,15 @@ const p1 = compose(
     parseStr
 );
 
-const p2 = () => 0;
+const garbage = prop('garbage');
+
+const totalGarbage = (node) =>
+    garbage(node) + sum(map(totalGarbage, node.children));
+
+const p2 = compose(
+    totalGarbage,
+    parseStr
+);
 
 module.exports = {
     ps: [p1, p2]

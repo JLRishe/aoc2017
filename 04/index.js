@@ -11,10 +11,20 @@ const isValid = compose(
 
 const sortWord = compose(join(''), sortBy(identity), toArray);
 
-const p1 = compose(length, filter(isValid), map(tokenize));
+const validatePassphrases = wordAdjust => compose(
+    length,
+    filter(isValid),
+    map(map(wordAdjust)),
+    map(tokenize)
+);
 
-const p2 = compose(length, filter(isValid), map(map(sortWord)), map(tokenize));
+const p1 = validatePassphrases(identity);
+
+const p2 = validatePassphrases(sortWord);
 
 module.exports = {
-    ps: [p1, p2]
+    solution: {
+        type: 'lines',
+        ps: [p1, p2]
+    }
 };

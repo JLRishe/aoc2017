@@ -2,7 +2,7 @@ const ramda = require('ramda');
 const { __, compose, map, filter, reduce, curry, identity, partial,applySpec } = ramda;
 const { take, drop, length, reverse, prop, split, head, tail, call, times, splitEvery, join, repeat, concat } = ramda;
 const { min, max, add, mathMod, multiply } = ramda;
-const { probe, tokenize, rotate } = require('../shared');
+const { probe, tokenize, rotate, add1 } = require('../shared');
 
 const reverseN = curry((n, arr) => [...reverse(take(n, arr)), ...drop(n, arr)])
 
@@ -18,7 +18,7 @@ const updatePos = (len, ropeLen, pos, skipSize) => (pos + len + skipSize) % rope
 const updateWorld = ({ rope, curPos, skipSize }, len) => ({
     rope: adjustRope(len, rope, curPos),
     curPos: updatePos(len, length(rope), curPos, skipSize),
-    skipSize: skipSize + 1
+    skipSize: add1(skipSize)
 });
 
 const applyLengths = curry((world, lengths) => reduce(updateWorld, world, lengths));
@@ -45,9 +45,14 @@ const applyLengths2 = lengths => reduce(
     repeat(0, 64)
 );
 
-const calcBlock = reduce((x, y) => x ^ y, 0);
+const xor = (x, y) => x ^ y;
 
-const toDenseHash = compose(map(calcBlock), splitEvery(16));
+const calcBlock = reduce(xor, 0);
+
+const toDenseHash = compose(
+    map(calcBlock), 
+    splitEvery(16)
+);
 
 const toBase = curry((base, num) => num.toString(base));
 

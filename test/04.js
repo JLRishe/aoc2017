@@ -1,6 +1,5 @@
 const assert = require('assert');
-const { ps } = require('../04');
-const [p1, p2] = ps;
+const { solution: { ps: [p1, p2] } } = require('../04');
 
 describe('day 4', () => {
     it('should work on samples for p1', () => {

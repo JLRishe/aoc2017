@@ -9,11 +9,21 @@ const tokenize = split(/\s+/);
 
 const arrayMap = curry((f, arr) => toArray(arr).map(f));
 
+const arrayFilter = curry((f, arr) => toArray(arr).filter(f));
+
 const applyPattern = curry((regex, str) => regex.exec(str));
 
 const probe = val => (log(val), val);
 
 const add1 = add(1);
+
+const repeatUntil = curry((update, stop, start) => {
+    let cur = start;
+    
+    while (!stop(cur)) { cur = update(cur) }
+    
+    return cur;
+});
 
 const rotate = curry((count, arr) => {
     const len = length(arr);
@@ -29,6 +39,8 @@ module.exports = {
     , applyPattern
     , toArray
     , arrayMap
+    , arrayFilter
     , add1
+    , repeatUntil
     , rotate
 };

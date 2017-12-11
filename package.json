@@ -1,5 +1,5 @@
 {
-  "name": "aoc2017",
+  "name": "aoc",
   "version": "0.0.1",
   "description": "",
   "main": "index.js",
@@ -12,12 +12,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/JLRishe/aoc2017.git"
   },
   "author": "Jimmy Rishe",
   "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/JLRishe/aoc2017/issues"
-  },
-  "homepage": "https://github.com/JLRishe/aoc2017#readme"
 }

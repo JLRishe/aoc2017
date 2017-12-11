@@ -11,8 +11,8 @@
     "test": "mocha test"
   },
   "repository": {
-    "type": "git",
+    "type": "git"
   },
   "author": "Jimmy Rishe",
-  "license": "MIT",
+  "license": "MIT"
 }

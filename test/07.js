@@ -1,8 +1,7 @@
 const day = '07';
 
 const assert = require('assert');
-const { ps, parseProgram } = require(`../${day}`);
-const [p1, p2] = ps;
+const { solution: { ps: [p1, p2] }, parseProgram } = require(`../${day}`);
 
 describe(`day ${day}`, () => {
     const programStrings = [

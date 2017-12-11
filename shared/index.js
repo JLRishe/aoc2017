@@ -1,4 +1,4 @@
-const { __, compose, curry, split, add, length, mathMod, drop, take } = require('ramda');
+const { __, compose, curry, split, add, length, mathMod, drop, take, prop } = require('ramda');
 
 
 const log = (...vals) => console.log.apply(console, vals);
@@ -16,6 +16,8 @@ const applyPattern = curry((regex, str) => regex.exec(str));
 const probe = val => (log(val), val);
 
 const add1 = add(1);
+
+const children = prop('children');
 
 const repeatUntil = curry((update, stop, start) => {
     let cur = start;
@@ -41,6 +43,7 @@ module.exports = {
     , arrayMap
     , arrayFilter
     , add1
+    , children
     , repeatUntil
     , rotate
 };

@@ -2,8 +2,7 @@ const day = '08';
 
 const assert = require('assert');
 const { add, subtract, gt, lt, gte, equals } = require('ramda');
-const { ps, parseInstruc, shouldApply, applyInstruc } = require(`../${day}`);
-const [p1, p2] = ps;
+const { solution: { ps: [p1, p2] }, parseInstruc, shouldApply, applyInstruc } = require(`../${day}`);
 
 describe(`day ${day}`, () => {
     const instrucs = [

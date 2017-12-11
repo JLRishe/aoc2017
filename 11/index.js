@@ -50,5 +50,8 @@ const p2 = compose(
 );
 
 module.exports = {
-    ps: [p1, p2]
+    solution: { 
+        type: 'input', 
+        ps: [p1, p2] 
+    }
 };

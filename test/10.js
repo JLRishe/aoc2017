@@ -1,8 +1,7 @@
 const day = '10';
 
 const assert = require('assert');
-const { ps, rotate, adjustRope, updatePos, applyLengths, run, toHex } = require(`../${day}`);
-const [p1, p2] = ps;
+const { solution: { ps: [p1, p2] }, rotate, adjustRope, updatePos, applyLengths, run, toHex } = require(`../${day}`);
 
 describe(`day ${day}`, () => {
     it('should rotate', () => {

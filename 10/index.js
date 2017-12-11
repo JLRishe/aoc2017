@@ -67,11 +67,14 @@ const p2 = compose(
 );
 
 module.exports = {
-    adjustRope
+    solution: {
+        type: 'input',
+        ps: [p1, p2]
+    }
+    , adjustRope
     , rotate
     , updatePos
     , applyLengths
     , run
     , toHex
-    , ps: [p1, p2]
 };

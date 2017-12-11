@@ -48,8 +48,11 @@ const applyInstrucKeepMax = ({ regs, maxReg }, instruc) => {
 const p2 = compose(prop('maxReg'), reduce(applyInstrucKeepMax, { regs: {}, maxReg: 0 }), map(parseInstruc));
 
 module.exports = {
-    parseInstruc,
-    shouldApply,
-    applyInstruc,
-    ps: [p1, p2]
+    solution: {
+        type: 'lines',
+        ps: [p1, p2]
+    }
+    , parseInstruc
+    , shouldApply
+    , applyInstruc
 };

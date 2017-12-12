@@ -1,16 +1,13 @@
-const { __, compose, prop, filter, map, groupBy, gt, identity, isEmpty, values, length, join, sortBy } = require('ramda');
+const { __, compose, prop, filter, map, groupBy, gt, identity, isEmpty, values, length, join, sortBy, uniq } = require('ramda');
 const { runLines, toArray, tokenize } = require('../shared');
 
-const isValid = compose(
-    isEmpty, 
-    filter(gt(__, 1)),
-    map(length),
-    values,
-    groupBy(identity),
-);
+// [String] -> Boolean
+const isValid = words => length(words) === length(uniq(words));
 
-const sortWord = compose(join(''), sortBy(identity), toArray);
+// String -> String
+const sortWord = compose(join(''), sortBy(identity));
 
+// (String -> String) -> [String] -> Number
 const validatePassphrases = wordAdjust => compose(
     length,
     filter(isValid),
@@ -18,8 +15,10 @@ const validatePassphrases = wordAdjust => compose(
     map(tokenize)
 );
 
+// [String] -> Number
 const p1 = validatePassphrases(identity);
 
+// [String] -> Number
 const p2 = validatePassphrases(sortWord);
 
 module.exports = {

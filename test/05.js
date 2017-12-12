@@ -1,8 +1,9 @@
 const day = '05';
+const dayString = `../${day}`;
 
 const assert = require('assert');
-const { ps } = require(`../${day}`);
-const [p1, p2] = ps;
+const dayContents = require(dayString);
+const { solution: { ps: [p1, p2] } } = dayContents;
 
 describe(`day ${day}`, () => {
     it('should work on samples for p1', () => {

@@ -41,6 +41,11 @@ const repeatUntil = curry((update, stop, start) => {
     
     return cur;
 });
+const countCycles = curry((update, stop, start) => prop('count', repeatUntil(
+    ({ count, state }) => ({ count: add1(count), state: update(state) }),
+    compose(stop, prop('state')),
+    { count: 0, state: start }
+)));
 
 
 module.exports = {
@@ -51,6 +56,8 @@ module.exports = {
     , arrayFilter
     , wrapIndexValue
     , wrapIndex
+    , rotate
+
     , applyPattern
     , tokenize
     , add1
@@ -59,5 +66,5 @@ module.exports = {
     , listMin
     , children
     , repeatUntil
-    , rotate
+    , countCycles
 };

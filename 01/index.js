@@ -1,28 +1,22 @@
 const { compose, curry, sum, replace, add, length, mathMod } = require('ramda');
-const { run, toArray, add1, wrapIndex } = require('../shared');
+const { run, arrayFilter, add1, wrapIndex } = require('../shared');
 
-const nextIdx = add1;
-const halfIdx = (idx, arr) => (idx + arr.length / 2);
+// Number -> * -> Number -> [*] -> Boolean
+const matchIdx = jumpLength => (el, i, arr) => el === wrapIndex(i + jumpLength, arr);
 
-const matchIdx = f => (el, i, arr) => el === wrapIndex(f(i, arr), arr);
-
-const eqNextIdx = matchIdx(nextIdx);
-
-const sumMatchedIdx = f => compose(
+// (Number -> [*] -> Number) -> String -> Number
+const sumMatchedIdx = jumpLength => compose(
     sum, 
-    arr => arr.filter(matchIdx(f)), 
-    toArray
+    arrayFilter(matchIdx(jumpLength))
 );
 
-const p1 = sumMatchedIdx(nextIdx);
-
-const p2 = sumMatchedIdx(halfIdx);
-
+// String -> Number
+const p1 = sumMatchedIdx(1);
+// String -> Number
+const p2 = input => sumMatchedIdx(length(input) / 2)(input);
 
 module.exports = {
     solution: {
         ps: [p1, p2]
     }
-    , nextIdx
-    , eqNextIdx
 };

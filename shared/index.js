@@ -1,4 +1,4 @@
-const { __, compose, curry, split, add, length, mathMod, drop, take, prop } = require('ramda');
+const { __, compose, curry, split, add, length, mathMod, drop, take, prop, apply } = require('ramda');
 
 
 // logging
@@ -9,6 +9,10 @@ const probe = val => (log(val), val);
 const toArray = val => Array.from(val);
 const arrayMap = curry((f, arr) => toArray(arr).map(f));
 const arrayFilter = curry((f, arr) => toArray(arr).filter(f));
+// Number -> [*] -> Number
+const wrapIndexValue = curry((i, arr) => mathMod(i, length(arr)));
+// Number -> [*] -> *
+const wrapIndex = curry((i, arr) => prop(wrapIndexValue(i, arr), arr));
 const rotate = curry((count, arr) => {
     const len = length(arr);
     const offset = len - mathMod(count, len);
@@ -22,6 +26,9 @@ const tokenize = split(/\s+/);
 
 // math
 const add1 = add(1);
+const sub1 = add(-1);
+const listMax = apply(Math.max);
+const listMin = apply(Math.min);
 
 // trees
 const children = prop('children');
@@ -39,12 +46,17 @@ const repeatUntil = curry((update, stop, start) => {
 module.exports = {
     log
     , probe
-    , tokenize
-    , applyPattern
     , toArray
     , arrayMap
     , arrayFilter
+    , wrapIndexValue
+    , wrapIndex
+    , applyPattern
+    , tokenize
     , add1
+    , sub1
+    , listMax
+    , listMin
     , children
     , repeatUntil
     , rotate

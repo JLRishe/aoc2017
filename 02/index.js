@@ -1,20 +1,30 @@
-const { runLines, arrayMap, probe, tokenize } = require('../shared');
-const { compose, map, apply, sum, max, min, split, head, filter, take, divide, drop, concat, flatten } = require('ramda');
+const { compose, map, apply, sum, split, head, filter, divide, flatten, remove, curry } = require('ramda');
+const { probe, arrayMap, tokenize, listMax, listMin } = require('../shared');
 
-const rowCheckSum1 = compose(row => apply(Math.max, row) - apply(Math.min, row), tokenize);
+const rowCheckSum1 = row => listMax(row) - listMin(row);
 
-const isInt = num => Math.round(num) === num;
+const isInt = num => ~~num === num;
 
-const itemQuotients = (el, i, arr) => map(divide(el))(concat(take(i, arr), drop(i + 1, arr)));
+const itemQuotients = (el, i, arr) => map(divide(el), remove(i, 1, arr));
 
-const rowCheckSum2 = compose(head, filter(isInt), flatten,  arrayMap(itemQuotients), map(Number), tokenize);
+const rowCheckSum2 = compose(
+    head,
+    filter(isInt),
+    flatten,
+    arrayMap(itemQuotients)
+);
 
-const addCheckSums = checkSum => compose(sum, map(checkSum));
+const normalize = compose(map(Number), tokenize);
+
+const addCheckSums = checkSum => compose(sum, map(checkSum), map(normalize));
 
 const p1 = addCheckSums(rowCheckSum1);
 
 const p2 = addCheckSums(rowCheckSum2);
 
 module.exports = {
-    ps: [p1, p2]
+    solution: {
+        type: 'lines',
+        ps: [p1, p2]
+    }
 };

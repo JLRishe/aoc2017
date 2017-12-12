@@ -2,7 +2,7 @@ const assert = require('assert');
 const { loadFile, loadInput, trimEnd, splitLines } = require('../shared/runhelpers');
 
 
-describe('shared', () => {
+describe('runner', () => {
     it('should load files', (done) => {
         loadFile('test/input.txt', input => {
             assert.equal('it works!', input);

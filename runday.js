@@ -1,5 +1,5 @@
-const day = process.argv[2];
+const path = require('path');
 
 const { runSolution } = require('./shared/runhelpers');
 
-runSolution(day, require(`./${day}`));
+runSolution(path.resolve(`./${process.argv[2]}`));

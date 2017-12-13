@@ -1,9 +1,9 @@
 const day = '13';
-const dayString = `../${day}`;
+const dayPath = `../${day}`;
 
 const assert = require('assert');
 const { prepare } = require('../shared/runhelpers');
-const dayContents = require(dayString);
+const dayContents = require(dayPath);
 const [p1, p2] = prepare(dayContents);
 
 describe(`day ${day}`, () => {

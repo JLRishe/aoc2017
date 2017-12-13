@@ -1,8 +1,5 @@
 const day = process.argv[2];
 
-const { run, runLines } = require('./shared/runhelpers');
-const { solution: { type, ps } } = require(`./${day}`);
+const { runSolution } = require('./shared/runhelpers');
 
-const runFunc = type === 'lines' ? runLines : run;
-
-runFunc(day, ps);
+runSolution(day, require(`./${day}`));

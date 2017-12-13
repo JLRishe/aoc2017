@@ -1,6 +1,6 @@
 const fs = require('fs');
-const { __, compose, curry, map, replace, split, applyTo, forEach, apply } = require('ramda');
-const { log } = require('.');
+const { __, compose, curry, map, replace, split, applyTo, forEach, apply, equals, when, isNil, identity, applySpec, memoizeWith, prop, always } = require('ramda');
+const { log, probe } = require('.');
 
 const loadFile = (path, cb) => fs.readFile(path, 'utf8', (err, contents) => {
     if (err) { console.log(err); } else { cb(contents); }
@@ -40,7 +40,22 @@ const feedLinesToEx = ex => compose(ex, splitLines);
 const runLines = (folder, exercises) =>
     run(folder, map(feedLinesToEx, exercises));
 
+// Solution => [(* -> *)]
+const prepare = ({ solution: { type, parse, ps } }) => {
+    const parser = memoizeWith(identity, parse || identity);
+    
+    return type === 'lines'
+        ? map(p => compose(p, map(parser), splitLines), ps)
+        : map(p => compose(p, parser), ps);
+};
 
+const runSolution = (folder, solution) => {
+    const prepared = prepare(solution);
+    
+    run(folder, prepared);
+};
+    
+    
 module.exports = {
     loadFile
     , loadInput
@@ -48,4 +63,6 @@ module.exports = {
     , splitLines
     , run
     , runLines
+    , runSolution
+    , prepare
 };

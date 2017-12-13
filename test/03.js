@@ -1,9 +1,15 @@
+const day = '03';
+const dayPath = `../${day}`;
+
 const assert = require('assert');
 const { curry } = require('ramda');
-const { ps, level, offset } = require('../03');
-const [p1, p2] = ps;
+const { prepare } = require('../shared/runhelpers');
 
-describe('day 3', () => {
+const dayContents = require(dayPath);
+const [p1, p2] = prepare(dayContents);
+const { ps, level, offset } = dayContents;
+
+describe(`day ${day}`, () => {
     it('should calculate level', () => {
         assert.equal(2, level(25), '25');
         assert.equal(2, level(13), '13');

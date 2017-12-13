@@ -1,70 +1,100 @@
-const { 
-    __, 
-    compose, 
-    add, 
-    multiply, 
-    modulo, 
-    subtract, 
-    ifElse, 
-    equals, 
-    always, 
-    lt, 
-    sum, 
-    applySpec,
-    cond,
-    prop,
-    complement,
-    map,
-    filter,
-    isNil,
-    T
-} = require('ramda');
-const { probe } = require('../shared');
+const ramda = require('ramda');
+const { __, compose, curry, map, filter, either, both, ifElse, equals, always, applySpec, cond, prop, complement, isNil, merge } = ramda;
+const { add, multiply, modulo, subtract, lt, sum } = ramda;
 
-const level = compose(Math.floor, multiply(0.5), add(1), Math.sqrt, add(-1));
+const { probe, add1, sub1, repeatUntil } = require('../shared');
 
+// Number -> Number
+const level = compose(
+    Math.floor, 
+    multiply(0.5), 
+    add(1), 
+    Math.sqrt, 
+    sub1
+);
+
+// Number -> Number
 const square = num => multiply(num, num);
 
-const levelTop = compose(square, add(1), multiply(2));
+// Number -> Number
+const levelTop = compose(
+    square,
+    add1,
+    multiply(2)
+);
 
-const prevLevelTop = compose(levelTop, add(-1));
+// Number -> Number
+const prevLevelTop = compose(levelTop, sub1);
 
+// Horizontal or vertical offset from the center, within a layer
+// Number -> Number
 const offset = num => {
     const l = level(num);
-    return ifElse(
-        equals(1),
-        always(0),
-        compose(
-            Math.abs, 
-            subtract(l), 
-            modulo(__, multiply(2, l)), 
-            subtract(__, prevLevelTop(l))
-        )
-    )(num);
-};
-
-const p1 = compose(sum, applySpec([level, offset]), Number);
-
-const nextX = ({ x, y, l }) => {
-    if (y === -l) { return x + 1; }
-    if (y === l && x > -l) { return x - 1; }
-    return x;
-};
     
-
-const nextY = ({ x, y, l }) => {
-    if (x === l && y < l && y !== -l) { return y + 1; }
-    if (x === -l && y > -l) { return y - 1; }
-    return y;
+    return equals(1, num)
+        ? 0
+        : Math.abs((num - prevLevelTop(l)) % (2 * l) - l);
 };
 
-const nextL = ({ x, y, l }) => l + Number(x === l && y === -l);
-    
-const nextSquare = applySpec({ x: nextX, y: nextY, l: nextL });
+// String -> Number
+const p1 = compose(
+    sum,
+    applySpec([level, offset]),
+    Number
+);
 
+// can't use equals() here because it returns false for 0 and -0
+// Position -> Boolean
+const isOnBottom = ({ y, layer }) => y === -layer;
+const isOnTop    = ({ y, layer }) => y ===  layer;
+const isOnRight  = ({ x, layer }) => x ===  layer;
+const isOnLeft   = ({ x, layer }) => x === -layer;
+
+// Position -> Number
+const xProp = prop('x');
+const yProp = prop('y');
+const lProp = prop('layer');
+
+// Position -> Number
+const nextX = ifElse(
+    isOnBottom,
+    compose(add1, xProp),
+    ifElse(
+        both(isOnTop, complement(isOnLeft)),
+        compose(sub1, xProp),
+        xProp
+    )
+);
+
+// Position -> Number
+const nextY = ifElse(
+    either(
+        isOnBottom,
+        both(isOnTop, complement(isOnLeft)),
+    ),
+    yProp,
+    ifElse(
+        isOnLeft,
+        compose(sub1, yProp),
+        compose(add1, yProp)
+    )
+);
+
+// Position -> Number
+const nextL = compose(
+    sum,
+    applySpec([lProp, both(isOnRight, isOnBottom)])
+);
+
+// Position -> Position    
+const nextSquare = applySpec({ x: nextX, y: nextY, layer: nextL });
+
+// Position -> String
 const propAt = ({ x, y }) => `${x},${y}`;
-const valAt = (square, obj) => obj[propAt(square)];
+// Position -> Object -> Number
+const valAt = curry((square, obj) => obj[propAt(square)]);
 
+// Position -> { x: Number, y: Number }
 const adjacentCoords = ({ x, y }) => [
     { x: x - 1, y: y + 1 },
     { x: x    , y: y + 1 },
@@ -76,32 +106,45 @@ const adjacentCoords = ({ x, y }) => [
     { x: x + 1, y: y - 1 }
 ];
 
+// Position -> Object -> Number
 const sumAdjacent = (square, mp) => compose(
     sum, 
     filter(complement(isNil)),
-    map((coords) => valAt(coords, mp)),
+    map(valAt(__, mp)),
     adjacentCoords
 )(square);
 
+// { mp: Object, pos: Position } -> { mp: Object, pos: Position }
+const nextState = ({ mp, pos }) => {
+    const newPos = nextSquare(pos);
+    
+    return {
+        mp: merge(mp, { [propAt(newPos)]: sumAdjacent(newPos, mp) }),
+        pos: newPos
+    };
+};
+
+// String -> Number
 const p2 = val => {
-    let valNum = Number(val);
-    let mp = { '0,0': 1 };
-    let curSquare = { x: 0, y: 0, l: 0 };
+    const valNum = Number(val);
     
-    while(valAt(curSquare, mp) <= valNum) {
-        curSquare = nextSquare(curSquare);
-        mp[propAt(curSquare)] = sumAdjacent(curSquare, mp);
-    }
+    const finishState = repeatUntil(
+        nextState,
+        ({ mp, pos }) => valAt(pos, mp) > valNum,
+        { mp: { '0,0': 1 }, pos: { x: 0, y: 0, layer: 0 } }
+    );
     
-    return valAt(curSquare, mp);
+    return valAt(finishState.pos, finishState.mp);
 };
 
 module.exports = {
-    level
+    solution: {
+        ps: [p1, p2]
+    }
+    , level
     , offset
     , adjacentCoords
     , propAt
     , valAt
     , nextSquare
-    , ps: [p1, p2]
 };

@@ -18,7 +18,7 @@ describe(`day ${day}`, () => {
     it('should work on samples for p1', () => {
         assert.equal(p1(lines), 6);
     });
-    
+
     it('should work on samples for p2', () => {
         assert.equal(p2(lines), 2);
     });

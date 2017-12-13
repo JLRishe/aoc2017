@@ -30,9 +30,12 @@ const runExercise = curry((input, exercise) =>
     timestamp(compose(log, exercise))(input)
 );
 
-// [(* -> *)] -> ()
-const runExercises = (exercises) => 
-    compose(map(__, exercises), runExercise, trimEnd);
+// [(* -> *)] -> String ()
+const runExercises = (exercises) => compose(
+    forEach(__, exercises), 
+    runExercise, 
+    trimEnd
+);
 
 // String -> [String]
 const splitLines = split(/\r\n|\r|\n/);
@@ -50,10 +53,12 @@ const prepare = ({ solution: { type, parse, ps } }) => {
 const prepareAndRun = compose(runExercises, prepare, require);
     
 // String -> ()
-const runSolution = (path) => {
+const runSolution = (relPath) => {
+    const fullPath = path.resolve(process.cwd(), relPath);
+    
     loadInput(
-        path, 
-        prepareAndRun(path)
+        fullPath, 
+        prepareAndRun(fullPath)
     );
 };
     

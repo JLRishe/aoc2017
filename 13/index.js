@@ -1,6 +1,6 @@
 const ramda = require('ramda');
-const { __, compose, map, filter, curry, split, identity, times, prop, reduce, last, indexBy, min, max, sum, length, ifElse, always } = ramda;
-const { probe, applyPattern, repeatUntil } = require('../shared');
+const { __, compose, map, curry, split, sum, ifElse, always, none } = ramda;
+const { probe, applyPattern, repeatUntil, add1 } = require('../shared');
 
 // String -> { depth: Number, range: Number, severity: Number }
 const parseScanner = compose(
@@ -10,8 +10,8 @@ const parseScanner = compose(
 );
 
 // Number -> Scanner -> Boolean
-const isHit = curry((offset, scanner) => phase = 
-    (scanner.depth + offset) % ((scanner.range - 1) * 2) === 0
+const isHit = curry((delay, scanner) => phase = 
+    (scanner.depth + delay) % ((scanner.range - 1) * 2) === 0
 );
 
 // [String] -> Number
@@ -21,21 +21,12 @@ const p1 = compose(
     map(parseScanner)
 );
 
-// Number -> [Scanner] -> Number
-const totalHits = curry((offset, scanners) => compose(
-    length,
-    filter(identity),
-    map(isHit(offset))
-)(scanners));
-
-// [Scanner] -> { delay: Number, result: Number }
-const findNeededDelay = scanners => compose(
-    prop('delay'),
-    repeatUntil(
-        ({ delay, result }) => (({ delay: delay + 1, result: totalHits(delay + 1, scanners) })),
-        ({ result }) => result === 0        
-    )
-)({ delay: 0, result: totalHits(0, scanners) });
+// [Scanner] -> Number
+const findNeededDelay = scanners => repeatUntil(
+    add1,
+    compose(none(__, scanners), isHit),
+    0
+);
 
 // [String] -> Number
 const p2 = compose(

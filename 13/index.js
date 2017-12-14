@@ -1,6 +1,6 @@
 const ramda = require('ramda');
 const { __, compose, map, curry, split, sum, ifElse, always, none, prop } = ramda;
-const { probe, applyPattern, repeatUntil, add1 } = require('../shared');
+const { probe, repeatUntil, add1 } = require('../shared');
 
 // String -> { depth: Number, range: Number, severity: Number }
 const parseScanner = compose(

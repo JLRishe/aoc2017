@@ -1,36 +1,45 @@
 const ramda = require('ramda');
-const { __, compose, curry, map, filter, merge, reduce, sum, identity, prop } = ramda;
+const { __, compose, curry, map, filter, merge, reduce, add, sum, identity, prop, concat } = ramda;
 const { replace } = ramda;
 const { probe } = require('../shared');
 
-const ignore = replace(/!./g, '');
+// String -> State -> State
+const newState = curry((type, parent) => ({ type, parent, children: [], garbage: 0 }));
 
-const removeGarbage = replace(/<[^>]*>/g, '');
+// String -> (a -> a) -> State -> a -> State
+const updateState = curry((propName, op, state, value) =>
+    merge(state, { [propName]: op(state[propName], value) })
+);
 
-const addChild = (obj, child) => 
-    merge(obj, { children: [...obj.children, child] });
+// State -> [*] -> State
+const addChildren = updateState('children', concat);
 
+// State -> String -> State
 const parseGroup = (state, ch) => {
     switch (ch) {
-        case '{': return { type: 'group', parent: state, children: [], garbage: 0 };
-        case '}': return addChild(state.parent, { children: state.children, garbage: state.garbage });
+        case '{': return newState('group', state);
+        case '}': return addChildren(state.parent, [{ children: state.children, garbage: state.garbage }]);
         case ',': return state;
-        case '<': return { parent: state, type: 'garbage', garbage: 0 };
+        case '<': return newState('garbage', state);
     }
 };
 
-const addGarbage = (obj, amt) => merge(obj, { garbage: obj.garbage + amt });
+// State -> Number -> State
+const addGarbage = updateState('garbage', add);
 
+// State -> String -> State
 const parseGarbage = (state, ch) => {
     switch (ch) {
         case '>': return addGarbage(state.parent, state.garbage);
-        case '!': return { type: 'ignore', parent: state };
-        default:  return addGarbage(state, 1);
+        case '!': return newState('ignore', state);
+        default :  return addGarbage(state, 1);
     }
 };
 
+// State -> State
 const parseIgnore = prop('parent');
 
+// State -> String -> State
 const parseChar = (state, ch) => {
     switch (state.type) {
         case 'root':
@@ -43,31 +52,38 @@ const parseChar = (state, ch) => {
     }
 };
 
-const parseStr = reduce(parseChar, { type: 'root', children: [], garbage: 0 });
+// String -> State
+const parseStr = reduce(parseChar, newState('root', null));
 
-const totalValues = curry((val, node) => 
-    val + compose(sum, map(totalValues(val + 1)))(node.children)
-);
+// Number -> ResultNode -> Number
+const totalValues = curry((val, node) => add(
+    val,
+    compose(
+        sum,
+        map(totalValues(val + 1))
+    )(node.children)
+));
 
+// String -> Number
 const p1 = compose(
     totalValues(0),
     parseStr
 );
 
-const garbage = prop('garbage');
-
+// ResultNode -> Number
 const totalGarbage = (node) =>
-    garbage(node) + sum(map(totalGarbage, node.children));
+    node.garbage + sum(map(totalGarbage, node.children));
 
+// String -> Number
 const p2 = compose(
     totalGarbage,
     parseStr
 );
 
 module.exports = {
-    ps: [p1, p2]
-    , ignore
-    , removeGarbage
+    solution: {
+        ps: [p1, p2]
+    }    
     , parseStr
     , totalValues
 };

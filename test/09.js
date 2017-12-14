@@ -1,25 +1,19 @@
 const day = '09';
+const dayPath = `../${day}`;
 
 const assert = require('assert');
-const { ps, ignore, removeGarbage, parseStr, totalValues } = require(`../${day}`);
-const [p1, p2] = ps;
+const { prepare } = require('../shared/runhelpers');
+
+const dayContents = require(dayPath);
+const [p1, p2] = prepare(dayContents);
+const { parseStr, totalValues } = dayContents;
 
 describe(`day ${day}`, () => {
     const empty = { children: [], garbage: 0 };
     
-    it('should ignore characters', () => {
-        assert.equal(ignore('{{<!!>},{<!!>},{<!!>},{<!!>}}'), '{{<>},{<>},{<>},{<>}}');
-        assert.equal(ignore('{{<a!>},{<a!>},{<a!>},{<ab>}}'), '{{<a},{<a},{<a},{<ab>}}');
-    });
-    
-    it('should remove garbage', () => {
-        assert.equal(removeGarbage('{{<>},{<>},{<>},{<>}}'), '{{},{},{},{}}');
-        assert.equal(removeGarbage('{{<a},{<a},{<a},{<ab>}}'), '{{}}');
-    });
-    
     it('should parse strings', () => {
-        assert.deepEqual(parseStr('{{}}'), { type: 'root', children: [{ children: [empty], garbage: 0 }], garbage: 0 });
-        assert.deepEqual(parseStr('{{},{},{},{}}'), { type: 'root', children: [{ children: [empty, empty, empty, empty], garbage: 0 }], garbage: 0 });
+        assert.deepEqual(parseStr('{{}}'), { type: 'root', parent: null, children: [{ children: [empty], garbage: 0 }], garbage: 0 });
+        assert.deepEqual(parseStr('{{},{},{},{}}'), { type: 'root', parent: null, children: [{ children: [empty, empty, empty, empty], garbage: 0 }], garbage: 0 });
     });
     
     it('should compute values', () => {

@@ -4,15 +4,17 @@ const { take, drop, length, reverse, prop, split, head, tail, call, times, split
 const { min, max, add, mathMod, multiply } = ramda;
 const { probe, tokenize, rotate, add1 } = require('../shared');
 
+// Number -> [a] -> [a]
 const reverseN = curry((n, arr) => [...reverse(take(n, arr)), ...drop(n, arr)])
 
+// Number -> [Number] -> Number -> [Number]
 const adjustRope = (len, rope, pos) => compose(
     rotate(pos),
     reverseN(len),
     rotate(-pos)
 )(rope);
 
-
+// Number -> Number -> Number -> Number -> Number
 const updatePos = (len, ropeLen, pos, skipSize) => (pos + len + skipSize) % ropeLen; 
 
 const updateWorld = ({ rope, curPos, skipSize }, len) => ({
@@ -37,13 +39,13 @@ const run = curry((size, line) => compose(
 
 const p1 = run(256);
 
-const ascii = ch => ch.charCodeAt(0);
+const asciiValue = ch => ch.charCodeAt(0);
 
-const applyLengths2 = lengths => reduce(
-    world => applyLengths(world, lengths),
-    initWorld(256),
-    repeat(0, 64)
-);
+const repeatApplyLengths = curry((repeatCount, size, lengths) => reduce(
+    applyLengths(__, lengths),
+    initWorld(size),
+    repeat(0, repeatCount)
+));
 
 const xor = (x, y) => x ^ y;
 
@@ -54,32 +56,42 @@ const toDenseHash = compose(
     splitEvery(16)
 );
 
+// Number -> String
 const toBase = curry((base, num) => num.toString(base));
 
+// Number -> String
 const toHex = compose(tail, toBase(16), add(0x100));
 
-const toKnotHash = compose(join(''), map(toHex));
+// [Number] -> String
+const bytesToHex = compose(join(''), map(toHex));
 
-const strToLengths = map(ascii);
+// String -> [Number]
+const toBytes = map(asciiValue);
 
-const p2 = compose(
-    toKnotHash,
+// String -> String
+const knotHash = compose(
+    bytesToHex,
     toDenseHash,
     prop('rope'),
-    applyLengths2,
+    repeatApplyLengths(64, 256),
     concat(__, [17, 31, 73, 47, 23]),
-    strToLengths,
+    toBytes,
 );
+
+// String -> String
+const p2 = knotHash;
 
 module.exports = {
     solution: {
         type: 'input',
         ps: [p1, p2]
     }
+    , asciiValue
     , adjustRope
     , rotate
     , updatePos
     , applyLengths
     , run
     , toHex
+    , knotHash
 };

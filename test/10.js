@@ -1,7 +1,7 @@
 const day = '10';
 
 const assert = require('assert');
-const { solution: { ps: [p1, p2] }, rotate, adjustRope, updatePos, applyLengths, run, toHex } = require(`../${day}`);
+const { solution: { ps: [p1, p2] }, rotate, adjustRope, updatePos, applyLengths, run, toHex, knotHash } = require(`../${day}`);
 
 describe(`day ${day}`, () => {
     it('should rotate', () => {
@@ -40,6 +40,10 @@ describe(`day ${day}`, () => {
         assert.equal(toHex(0xf), '0f');
         assert.equal(toHex(0), '00');
         assert.equal(toHex(0xff), 'ff');
+    });
+    
+    it('should compute knot hashes', () => {
+        assert.equal(knotHash('hxtvlmkl'), 'adc93c0e7714b70f14a175f852ffb6ae');
     });
     
     it('should work on samples for p2', () => {

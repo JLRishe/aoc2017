@@ -8,8 +8,8 @@
   },
   "devDependencies": {},
   "scripts": {
-    "test": "mocha test",
-	"runday": "node -e \"require('./shared/runhelpers').runSolution(process.argv[1])\""
+    "test": "mocha -g \"^(?!slow)\"",
+    "runday": "node -e \"require('./shared/runhelpers').runSolution(process.argv[1])\""
   },
   "repository": {
     "type": "git"

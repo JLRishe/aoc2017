@@ -11,13 +11,13 @@ describe(`day ${day}`, () => {
         assert.equal(hexToBinary('a'), '1010');
     });
     
+    xit('should work on samples for p2', () => {
+        throw new Error('not implemented');
+    });
+});
+
+describe(`slow ${day}`, () => {
     it('should work on samples for p1', () => {
         assert.equal(p1('flqrgnkx'), 8108);
     }).timeout(10000);
-    
-    /* Not yet implemented
-    it('should work on samples for p2', () => {
-        throw new Error('not implemented');
-    });
-    */
 });

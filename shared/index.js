@@ -9,6 +9,7 @@ const probe = val => (log(val), val);
 const toArray = val => Array.from(val);
 const arrayMap = curry((f, arr) => toArray(arr).map(f));
 const arrayFilter = curry((f, arr) => toArray(arr).filter(f));
+const arrayReduce = curry((f, init, arr) => toArray(arr).reduce(f, init));
 // Number -> [*] -> Number
 const wrapIndexValue = curry((i, arr) => mathMod(i, length(arr)));
 // Number -> [*] -> *

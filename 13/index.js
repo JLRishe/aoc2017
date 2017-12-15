@@ -1,5 +1,5 @@
 const ramda = require('ramda');
-const { __, compose, map, curry, split, sum, ifElse, always, none, prop } = ramda;
+const { __, compose, map, filter, curry, split, sum, ifElse, always, none, prop } = ramda;
 const { probe, repeatUntil, add1 } = require('../shared');
 
 // String -> { depth: Number, range: Number, severity: Number }
@@ -14,12 +14,11 @@ const isHit = curry((delay, scanner) => phase =
     (scanner.depth + delay) % ((scanner.range - 1) * 2) === 0
 );
 
-const scannerSeverity = delay => ifElse(isHit(delay), prop('severity'), always(0))
-
-// [String] -> Number
+// [Scanner] -> Number
 const p1 = compose(
     sum,
-    map(scannerSeverity(0))
+    map(prop('severity')),
+    filter(isHit(0))
 );
 
 // [Scanner] -> Number

@@ -45,6 +45,7 @@ const transformerGen = curry((update, start) => function* () {
     }
 });
 
+const nextValue = it => it.next().value;
 
 module.exports = {
     zipGen
@@ -52,4 +53,5 @@ module.exports = {
     , repeatGen
     , infiniteGen
     , transformerGen
+    , nextValue
 };

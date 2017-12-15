@@ -1,6 +1,7 @@
 const { __, compose, curry } = require('ramda');
 
-const zipGen = curry((gf1, gf2) => function* () {
+// Generator -> Generator -> Generator
+const genZip = curry((gf1, gf2) => function* () {
     const it1 = gf1();
     const it2 = gf2();
     let n1 = it1.next();
@@ -13,31 +14,38 @@ const zipGen = curry((gf1, gf2) => function* () {
     }
 });
 
-const filterGen = curry((f, genf) => function* (...args) {
-    const gen = genf.apply(null, args);
-    let next = gen.next();
-    
-    while (!next.done) {
-        if (f(next.value)) {
-            yield next.value;
-        }
-        next = gen.next();
+// (* -> *) -> Generator -> Generator
+const genMap = curry((f, genf) => function* (...args) {
+    for (let val of genf(...args)) {
+        yield f(val);
     }
 });
 
-const repeatGen = (times) => function* () {
+// (* -> Boolean) -> Generator -> Generator
+const genFilter = curry((f, genf) => function* (...args) {
+    for (let val of genf(...args)) {
+        if (f(val)) {
+            yield val;
+        }
+    }
+});
+
+// Number -> Generator
+const genTimes = (times) => function* () {
     for (let i = 0; i < times; i += 1) {
         yield i;
     }
-}
+};
 
-function* infiniteGen() {
+// () -> Generator
+function* genInfinite() {
     for (let i = 0; ; i += 1) {
         yield i;
     }
 }
 
-const transformerGen = curry((update, start) => function* () {
+// (a -> a) -> a -> Generator
+const genTransform = curry((update, start) => function* () {
     let val = start;
     while (true) {
         yield val;
@@ -45,13 +53,27 @@ const transformerGen = curry((update, start) => function* () {
     }
 });
 
-const nextValue = it => it.next().value;
+// Generator -> *
+const genHead = gen => gen().next().value;
+
+// Generator -> *
+const genLength = gen => {
+    let count = 0;
+    
+    for (let x of gen()) {
+        count += 1;
+    }
+    
+    return count;
+};
 
 module.exports = {
-    zipGen
-    , filterGen
-    , repeatGen
-    , infiniteGen
-    , transformerGen
-    , nextValue
+    genZip
+    , genFilter
+    , genMap
+    , genTimes
+    , genInfinite
+    , genTransform
+    , genHead
+    , genLength
 };

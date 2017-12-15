@@ -1,4 +1,4 @@
-const { compose, map, filter, curry, prop, sortBy, merge, keys, head, last, length } = require('ramda');
+const { compose, map, filter, curry, prop, sortBy, merge, keys, values, head, last, length, groupBy } = require('ramda');
 const { probe } = require('../shared');
 
 // DisjointSets -> Number
@@ -8,19 +8,39 @@ const countSets = sets => compose(
     keys
 )(sets);
 
-// DisjointSets -> Number -> String -> DisjointSets 
-const find = curry((sets, depth, val) => 
+// DisjointSets -> Number -> String -> { depth: Number, val: String } 
+const findWithDepth = curry((sets, depth, val) => 
     sets[val] === val || !(val in sets)
         ? { depth, val }
-        : find(sets, depth + 1, sets[val])
+        : findWithDepth(sets, depth + 1, sets[val])
 );
 
+const find = curry((sets, val) => 
+    prop('val', findWithDepth(sets, 0, val))
+);
+
+const findSet = curry((sets, val) => {
+    const targetSet = find(sets, val);
+    
+    return compose(
+        filter(k => find(sets, k) === targetSet),
+        keys
+    )(sets);
+});
+
+// DisjointSets -> [[String]]
+const allSets = sets => compose(
+    values,
+    groupBy(find(sets)),
+    keys,
+)(sets);
+
 // DisjointSets -> String -> String -> DisjointSets
-const join = curry((sets, a, b) => {
+const join = curry((a, b, sets) => {
     const tops = compose(
         map(prop('val')),
         sortBy(prop('depth')),
-        map(find(sets, 0))
+        map(findWithDepth(sets, 0))
     )([a, b]);
     const shortTop = head(tops);
     const longTop = last(tops);
@@ -29,7 +49,7 @@ const join = curry((sets, a, b) => {
 });
 
 // DisjointSets -> String -> DisjointSets
-const insert = curry((sets, key) => 
+const insert = curry((key, sets) => 
     merge(sets, { [key]: key in sets ? sets[key] : key })
 );
 
@@ -39,6 +59,8 @@ module.exports = {
     disjointSets,
     insert,
     join,
-    countSets
+    countSets,
+    findSet,
+    allSets
 };
 

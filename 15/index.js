@@ -1,5 +1,5 @@
 const ramda = require('ramda');
-const { __, compose, curry, map, filter, reduce, length, when, multiply, modulo, call, last } = ramda;
+const { __, compose, curry, map, filter, reduce, length, when, multiply, modulo, call, last, partial } = ramda;
 const { probe, add1, applyPattern } = require('../shared');
 const { genZip, genFilter, genTimes, genTransform, genHead, genMap, genLength } = require('../shared/generators');
 
@@ -12,10 +12,7 @@ const parseStart = compose(
 );
 
 // Number -> Number -> Gen Number
-const generator = factor => start => genTransform(
-    v => v * factor % 2147483647,
-    start
-);
+const generator = factor => genTransform(v => v * factor % 2147483647);
 
 // [Number, Number] -> Boolean
 const isMatch = ([a, b]) => (a & 0xFFFF) === (b & 0xFFFF);
@@ -25,25 +22,23 @@ const a = generator(16807);
 const b = generator(48271);
 
 // Number -> Gen Number -> Gen Number -> Number
-const runMatches = curry((pairCount, aGen, bGen) => compose(
+const runMatches = curry((pairCount, aGen, aStart, bGen, bStart) => compose(
     genLength,
     genFilter(isMatch),
     genMap(([, pair]) => pair),
     genZip(genTimes(pairCount)),
     genZip
-)(aGen, bGen));
+)(partial(aGen, [aStart]), partial(bGen, [bStart])));
 
 // Number -> Gen Number -> Number -> Gen Number
-const pickyGenerator = curry((factor, genType, start) => 
-    genFilter(v => v % factor === 0, genType(start))
-);
+const pickyGenerator = (factor, baseGen) => genFilter(v => v % factor === 0, baseGen);
 
 // Number -> Gen Number
 const pickya = pickyGenerator(4, a);
 const pickyb = pickyGenerator(8, b);
 
 const watchGenerators = curry((cycles, genAType, genBType, [aStart, bStart]) =>
-    runMatches(cycles, genAType(aStart), genBType(bStart))
+    runMatches(cycles, genAType, aStart, genBType, bStart)
 );
 
 // [Number] -> Number

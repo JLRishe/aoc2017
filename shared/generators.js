@@ -58,7 +58,7 @@ const genTransform = (update, ...embedStart) => function* (start) {
 const genHead = gen => (...args) => gen(...args).next().value;
 
 // Generator -> *
-const genHeadNow = gen => gen().next().value;
+const genHeadNow = (gen, ...args) => gen(...args).next().value;
 
 // Generator -> *
 const genLength = gen => {

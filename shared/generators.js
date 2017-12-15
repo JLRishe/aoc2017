@@ -25,7 +25,7 @@ const filterGen = curry((f, genf) => function* (...args) {
     }
 });
 
-function* repeatGen(times) {
+const repeatGen = (times) => function* () {
     for (let i = 0; i < times; i += 1) {
         yield i;
     }

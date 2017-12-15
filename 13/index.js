@@ -1,6 +1,7 @@
 const ramda = require('ramda');
-const { __, compose, map, filter, curry, split, sum, ifElse, always, none, prop } = ramda;
+const { __, compose, map, filter, curry, split, sum, ifElse, always, none, prop, call } = ramda;
 const { probe, repeatUntil, add1 } = require('../shared');
+const { infiniteGen, filterGen, nextValue } = require('../shared/generators');
 
 // String -> { depth: Number, range: Number, severity: Number }
 const parseScanner = compose(
@@ -22,11 +23,11 @@ const p1 = compose(
 );
 
 // [Scanner] -> Number
-const p2 = scanners => repeatUntil(
-    add1,
-    compose(none(__, scanners), isHit),
-    0
-);
+const p2 = scanners => compose(
+    nextValue,
+    call,
+    filterGen(compose(none(__, scanners), isHit)),
+)(infiniteGen);
 
 module.exports = {
     solution: {

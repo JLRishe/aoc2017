@@ -34,7 +34,7 @@ const runMatches = curry((pairCount, aGen, bGen) => {
     return reduce(
         c => c + nextIsMatch(pairs),
         0,
-        repeatGen(pairCount)
+        repeatGen(pairCount)()
     );
 });
 

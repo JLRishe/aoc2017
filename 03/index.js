@@ -1,8 +1,9 @@
 const ramda = require('ramda');
-const { __, compose, curry, map, filter, either, both, ifElse, equals, always, applySpec, cond, prop, complement, isNil, merge } = ramda;
+const { __, compose, curry, map, filter, either, both, ifElse, equals, always, applySpec, cond, prop, complement, isNil, merge, call, converge } = ramda;
 const { add, multiply, modulo, subtract, lt, sum } = ramda;
 
 const { probe, add1, sub1, repeatUntil } = require('../shared');
+const { genFilter, genTransform, genHeadNow } = require('../shared/generators');
 
 // Number -> Number
 const level = compose(
@@ -128,13 +129,11 @@ const nextState = ({ mp, pos }) => {
 const p2 = val => {
     const valNum = Number(val);
     
-    const finishState = repeatUntil(
-        nextState,
-        ({ mp, pos }) => valAt(pos, mp) > valNum,
-        { mp: { '0,0': 1 }, pos: { x: 0, y: 0, layer: 0 } }
-    );
-    
-    return valAt(finishState.pos, finishState.mp);
+    return compose(
+        converge(valAt, [prop('pos'), prop('mp')]),
+        genHeadNow,
+        genFilter(({ mp, pos }) => valAt(pos, mp) > valNum)
+    )(genTransform(nextState, { mp: { '0,0': 1 }, pos: { x: 0, y: 0, layer: 0 } }));
 };
 
 module.exports = {

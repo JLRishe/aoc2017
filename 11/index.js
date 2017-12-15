@@ -1,5 +1,5 @@
 const { __, compose, map, filter, curry, split, reduce, prop, min, max, merge, subtract, memoizeWith, identity } = require('ramda');
-const { probe, repeatUntil, add1 } = require('../shared');
+const { probe, add1 } = require('../shared');
 
 // Number -> Number -> CartPair
 const cartPair = (x, y) => ({ x, y });

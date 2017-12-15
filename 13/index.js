@@ -1,6 +1,6 @@
 const ramda = require('ramda');
 const { __, compose, map, filter, curry, split, sum, ifElse, always, none, prop, call } = ramda;
-const { probe, repeatUntil, add1 } = require('../shared');
+const { probe, add1 } = require('../shared');
 const { genFilter, genInfinite, genHead } = require('../shared/generators');
 
 // String -> { depth: Number, range: Number, severity: Number }
@@ -24,6 +24,7 @@ const p1 = compose(
 
 // [Scanner] -> Number
 const p2 = scanners => compose(
+    call,
     genHead,
     genFilter(compose(none(__, scanners), isHit)),
 )(genInfinite);

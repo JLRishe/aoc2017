@@ -1,4 +1,4 @@
-const { __, compose, curry, split, add, length, mathMod, drop, take, prop, apply } = require('ramda');
+const { __, compose, curry, map, split, add, length, mathMod, drop, take, prop, apply } = require('ramda');
 
 
 // logging
@@ -20,6 +20,17 @@ const rotate = curry((count, arr) => {
     
     return [...drop(offset, arr), ...take(offset, arr)];
 });
+// Number -> Number -> [*] -> [*]
+const swapPos = curry((pos1, pos2, arr) => arrayMap(
+    (el, i) => i === pos1 ? arr[pos2] : (i === pos2 ? arr[pos1] : el),
+    arr
+));
+// * -> * -> [*] -> [*]
+const swapValues = curry((val1, val2, arr) => map(
+    el => el === val1 ? val2 : (el === val2 ? val1 : el),
+    arr
+));
+
 
 // regex
 const applyPattern = curry((regex, str) => regex.exec(str));
@@ -58,6 +69,8 @@ module.exports = {
     , wrapIndexValue
     , wrapIndex
     , rotate
+    , swapPos
+    , swapValues
 
     , applyPattern
     , tokenize

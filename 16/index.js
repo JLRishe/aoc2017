@@ -1,12 +1,13 @@
 const ramda = require('ramda');
-const { __, compose, curry, map, filter, split, reduce, join, head, equals, call, modulo, converge, identity, memoizeWith } = ramda;
+const { __, compose, curry, map, split, reduce, join, head, equals, call, modulo, converge, identity, memoizeWith, applyTo } = ramda;
 const { probe, applyPattern, rotate, swapPos, swapValues } = require('../shared');
 const { genDrop, genHead, genTake, genTransform, genMap, genZip, genInfinite, genFilter } = require('func-generators');
 
+// Instruction is ([String] -> [String])
 const instrucTypes = {
-    s: (c, _) => rotate(Number(c)),
+    s: (c)      => rotate(Number(c)),
     x: (p1, p2) => swapPos(Number(p1), Number(p2)),
-    p: (p1, p2) => swapValues(p1, p2)
+    p:             swapValues
 };
 
 // String -> ([String] -> [String])
@@ -15,43 +16,38 @@ const parseInstruc = compose(
     applyPattern(/^([sxp])([^\/]+)(?:\/(.+))?/)
 );
 
-// Instruction is ([String] -> [String])
-// String -> [Instruction]
-const parseInstrucs = compose(
-    map(parseInstruc),
-    split(',')
-);
-
 // [String]
 const dancers = split('', 'abcdefghijklmnop');
 
 // [Instruction] -> [String]
 const runDance = instrucs => memoizeWith(
     join(''),
-    reduce(
-        (d, i) => i(d),
-        __,
-        instrucs
-    )
+    reduce(applyTo, __, instrucs)
 );
 
 // [Instruction] -> [String] -> Generator [String]
-const dances = curry((instrucs, dancers) => genTransform(
+const dances = curry((dancers, instrucs) => genTransform(
     runDance(instrucs),
-    dancers    
+    dancers
 ));
+
+// Number -> Generator a -> a
+const genNth = curry((n, gen) => compose(
+    genHead,
+    genDrop(n)
+)(gen));
 
 // [Instruction] -> String
 const p1 = compose(
     join(''),
-    is => runDance(is)(dancers)
+    call,
+    genNth(1)
 );
 
 // Generator [String] -> Number
 const findPeriod = compose(
     call,
-    genHead,
-    genDrop(1),
+    genNth(1),
     genMap(head),
     genFilter(([,r]) => equals(r, dancers)),
     genZip(genInfinite)
@@ -63,26 +59,18 @@ const findTarget = compose(
     findPeriod
 );
 
-// Number -> Generator a -> a
-const genNth = curry((n, gen) => compose(
-    genHead,
-    genDrop(n)
-)(gen));
-
 // [Instruction] -> String
 const p2 = compose(
     join(''),
     call,
-    converge(genNth, [findTarget, identity]),
-    is => dances(is, dancers)
+    converge(genNth, [findTarget, identity])
 );
 
 module.exports = {
     solution: {
-        parse: parseInstrucs,
+        pre: compose(dances(dancers), map(parseInstruc), split(',')),
         ps: [p1, p2]
     }
-    , parseInstrucs
     , dancers
     , dances
 };

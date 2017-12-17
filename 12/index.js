@@ -2,7 +2,7 @@ const ramda = require('ramda');
 const { __, compose, map, filter, reduce, curry, indexBy, prop, ifElse, always, keys, identity, split, flip } = ramda;
 const { length, uniq, without, contains, flatten, concat, sortBy } = ramda;
 const { probe } = require('../shared');
-const { disjointSets, insert, join, allSets, countSets, findSet } = require('../shared/unionFind');
+const { disjointSets, insert, connect, allSets, countSets, findSet } = require('../shared/unionFind');
 
 // String -> Pipe
 const parsePipe = compose(
@@ -12,7 +12,7 @@ const parsePipe = compose(
 
 // DisjointSets -> Pipe -> DisjointSets
 const addConnection = (sets, pipe) => reduce(
-    (s, n) => join(pipe.name, n, s),
+    (s, n) => connect(pipe.name, n, s),
     sets,
     pipe.neighbors
 );
@@ -39,7 +39,7 @@ const p2 = compose(
 module.exports = {
     solution: {
         type: 'lines',
-        parse: parsePipe,
+        pre: parsePipe,
         ps: [p1, p2]
     }
 };

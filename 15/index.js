@@ -50,7 +50,7 @@ const p2 = watchGenerators(5000000, pickya, pickyb);
 module.exports = {
     solution: {
         type: 'lines',
-        parse: parseStart,
+        pre: parseStart,
         ps: [p1, p2]
     }
 };

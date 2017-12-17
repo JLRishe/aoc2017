@@ -1,6 +1,6 @@
 const assert = require('assert');
 const { __, compose, map, sortBy, identity, contains } = require('ramda');
-const { disjointSets, join, countSets, insert, allSets, findSet } = require('../shared/unionFind');
+const { disjointSets, connect, countSets, insert, allSets, findSet } = require('../shared/unionFind');
 const { probe } = require('../shared');
 
 describe('union find', () => {
@@ -10,15 +10,15 @@ describe('union find', () => {
     // b h
     
     const sampleSet = compose(
-        join('a', 'c'),
-        join('f', 'a'),
-        join('g', 'd'),
-        join('g', 'i'),
-        join('d', 'i'),
+        connect('a', 'c'),
+        connect('f', 'a'),
+        connect('g', 'd'),
+        connect('g', 'i'),
+        connect('d', 'i'),
         insert('g'),
         insert('d'),
         insert('e'),
-        join('b', 'h'),
+        connect('b', 'h'),
         insert('b'),
         insert('i'),
         insert('h'),

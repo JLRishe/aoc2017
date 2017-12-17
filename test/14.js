@@ -1,9 +1,11 @@
 const day = '14';
-const dayString = `../${day}`;
+const dayPath = `../${day}`;
 
 const assert = require('assert');
-const dayContents = require(dayString);
-const { solution: { ps: [p1, p2] }, hexToBinary } = dayContents;
+const { prepare } = require('../shared/runhelpers');
+const dayContents = require(dayPath);
+const [p1, p2] = prepare(dayContents);
+const { hexToBinary } = dayContents;
 
 describe(`day ${day}`, () => {
     it('should convert hex to binary', () => {
@@ -11,13 +13,16 @@ describe(`day ${day}`, () => {
         assert.equal(hexToBinary('a'), '1010');
     });
     
-    xit('should work on samples for p2', () => {
-        throw new Error('not implemented');
-    });
 });
 
 describe(`slow ${day}`, () => {
+    const sampleInput = 'flqrgnkx';
+
     it('should work on samples for p1', () => {
-        assert.equal(p1('flqrgnkx'), 8108);
+        assert.equal(p1(sampleInput), 8108);
     }).timeout(10000);
+
+    it('should work on samples for p2', () => {
+        assert.equal(p2(sampleInput), 1242);
+    }).timeout(60000);
 });

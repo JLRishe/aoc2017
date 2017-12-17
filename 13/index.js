@@ -32,7 +32,7 @@ const p2 = scanners => compose(
 module.exports = {
     solution: {
         type: 'lines',
-        parse: parseScanner,
+        pre: parseScanner,
         ps: [p1, p2]
     }
 };

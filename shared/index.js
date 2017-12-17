@@ -66,6 +66,7 @@ module.exports = {
     , toArray
     , arrayMap
     , arrayFilter
+    , arrayReduce
     , wrapIndexValue
     , wrapIndex
     , rotate

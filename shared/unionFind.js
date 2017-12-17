@@ -36,7 +36,7 @@ const allSets = sets => compose(
 )(sets);
 
 // DisjointSets -> String -> String -> DisjointSets
-const join = curry((a, b, sets) => {
+const connect = curry((a, b, sets) => {
     const tops = compose(
         map(prop('val')),
         sortBy(prop('depth')),
@@ -58,7 +58,7 @@ const disjointSets = {};
 module.exports = {
     disjointSets,
     insert,
-    join,
+    connect,
     countSets,
     findSet,
     allSets

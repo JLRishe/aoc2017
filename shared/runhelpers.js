@@ -41,8 +41,8 @@ const runExercises = (exercises) => compose(
 const splitLines = split(/\r\n|\r|\n/);
     
 // DaySpec => [(* -> *)]
-const prepare = ({ solution: { type, parse, ps } }) => {
-    const parser = memoizeWith(identity, parse || identity);
+const prepare = ({ solution: { type, pre, ps } }) => {
+    const parser = memoizeWith(identity, pre || identity);
     
     return type === 'lines'
         ? map(p => compose(p, map(parser), splitLines), ps)

@@ -3,8 +3,12 @@ const { __, compose, curry, map, filter, insert, prop } = ramda;
 const { probe, wrapIndex, wrapIndexValue } = require('../shared');
 const { genTransform, genFilter, genHead, genTake, genLast } = require('func-generators');
 
+// SpinlockState is { arr: [Number], pos: Number, step: Number }
+
+// Number -> Number -> Number -> Number
 const nextStop = curry((stepLength, pos, lastStep) => (pos + stepLength) % (lastStep + 1));
 
+// Number -> SpinlockState -> SpinlockState
 const nextState = curry((stepLength, { arr, pos, step }) => {
     const stopPos = nextStop(stepLength, pos, step);
     const newArr = insert(stopPos + 1, step + 1, arr);
@@ -16,11 +20,13 @@ const nextState = curry((stepLength, { arr, pos, step }) => {
     };
 });
 
+// Number -> Generator SpinlockState
 const transformer = stepLength => genTransform(
     nextState(stepLength),
     { arr: [0], pos: 0, step: 0 }
 );
 
+// Number -> Number
 const p1 = compose(
     res => wrapIndex(res.pos + 1, res.arr),
     genHead,
@@ -28,6 +34,7 @@ const p1 = compose(
     transformer
 );
 
+// Number -> Generator { step: Number, stop: Number }
 const posTransformer = stepLength => genTransform(
     ({ step, stop }) => ({ 
         step: step + 1, 
@@ -36,6 +43,7 @@ const posTransformer = stepLength => genTransform(
     { step: 0, stop: 0 }
 );
 
+// Number -> Number
 const p2 = compose(
     prop('step'),
     genLast,

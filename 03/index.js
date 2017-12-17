@@ -3,7 +3,7 @@ const { __, compose, curry, map, filter, either, both, ifElse, equals, always, a
 const { add, multiply, modulo, subtract, lt, sum } = ramda;
 
 const { probe, add1, sub1, repeatUntil } = require('../shared');
-const { genFilter, genTransform, genHeadNow } = require('../shared/generators');
+const { genFilter, genTransform, genHead } = require('../shared/generators');
 
 // Number -> Number
 const level = compose(
@@ -131,7 +131,7 @@ const p2 = val => {
     
     return compose(
         converge(valAt, [prop('pos'), prop('mp')]),
-        genHeadNow,
+        genHead,
         genFilter(({ mp, pos }) => valAt(pos, mp) > valNum)
     )(genTransform(nextState, { mp: { '0,0': 1 }, pos: { x: 0, y: 0, layer: 0 } }));
 };

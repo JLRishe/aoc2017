@@ -6,16 +6,15 @@ const { genTransform, genFilter, genHead, genTake, genLast } = require('func-gen
 // SpinlockState is { arr: [Number], pos: Number, step: Number }
 
 // Number -> Number -> Number -> Number
-const nextStop = curry((stepLength, pos, lastStep) => (pos + stepLength) % (lastStep + 1));
+const nextPos = curry((stepLength, pos, lastStep) => (pos + stepLength) % (lastStep + 1) + 1);
 
 // Number -> SpinlockState -> SpinlockState
 const nextState = curry((stepLength, { arr, pos, step }) => {
-    const stopPos = nextStop(stepLength, pos, step);
-    const newArr = insert(stopPos + 1, step + 1, arr);
+    const insPos = nextPos(stepLength, pos, step);
     
     return {
-        arr: newArr,
-        pos: wrapIndexValue(stopPos + 1, newArr),
+        arr: insert(insPos, step + 1, arr),
+        pos: insPos,
         step: step + 1
     };
 });
@@ -36,18 +35,18 @@ const p1 = compose(
 
 // Number -> Generator { step: Number, stop: Number }
 const posTransformer = stepLength => genTransform(
-    ({ step, stop }) => ({ 
+    ({ step, pos }) => ({ 
         step: step + 1, 
-        stop: nextStop(stepLength, (stop + 1) % (step + 1), step) 
+        pos: nextPos(stepLength, pos, step) 
     }),
-    { step: 0, stop: 0 }
+    { step: 0, pos: 0 }
 );
 
 // Number -> Number
 const p2 = compose(
     prop('step'),
     genLast,
-    genFilter(({ stop }) => stop === 0),
+    genFilter(({ pos }) => pos === 1),
     genTake(50000001),
     posTransformer
 );

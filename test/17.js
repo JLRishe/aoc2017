@@ -24,16 +24,16 @@ describe(`day ${day}`, () => {
         const firstTen = genTake(10, posTransformer(3));
 
         assert.deepEqual(Array.from(firstTen()), [
-            { step: 0, stop: 0 },
-            { step: 1, stop: 0 },
-            { step: 2, stop: 0 },
-            { step: 3, stop: 1 },
-            { step: 4, stop: 1 },
-            { step: 5, stop: 0 },
-            { step: 6, stop: 4 },
-            { step: 7, stop: 1 },
-            { step: 8, stop: 5 },
-            { step: 9, stop: 0 }
+            { step: 0, pos: 0 },
+            { step: 1, pos: 1 },
+            { step: 2, pos: 1 },
+            { step: 3, pos: 2 },
+            { step: 4, pos: 2 },
+            { step: 5, pos: 1 },
+            { step: 6, pos: 5 },
+            { step: 7, pos: 2 },
+            { step: 8, pos: 6 },
+            { step: 9, pos: 1 }
         ]);
     });
 });

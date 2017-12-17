@@ -1,7 +1,7 @@
 const ramda = require('ramda');
 const { __, compose, curry, map, filter, reduce, length, when, multiply, modulo, call, last, partial } = ramda;
 const { probe, add1, applyPattern } = require('../shared');
-const { genZip, genFilter, genTimes, genTransform, genHead, genMap, genLength } = require('../shared/generators');
+const { genZip, genFilter, genTimes, genTransform, genMap, genLength } = require('../shared/generators');
 
 const generatorStartPattern = /^Generator ([A-Z]) starts with (\d+)$/;
 

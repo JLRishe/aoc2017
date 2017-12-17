@@ -40,7 +40,6 @@ const genNth = curry((n, gen) => compose(
 // [Instruction] -> String
 const p1 = compose(
     join(''),
-    call,
     genNth(1)
 );
 

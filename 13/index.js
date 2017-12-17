@@ -24,7 +24,6 @@ const p1 = compose(
 
 // [Scanner] -> Number
 const p2 = scanners => compose(
-    call,
     genHead,
     genFilter(compose(none(__, scanners), isHit)),
 )(genInfinite);

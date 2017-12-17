@@ -36,7 +36,9 @@ describe(`day ${day}`, () => {
             { step: 9, stop: 0 }
         ]);
     });
-    
+});
+
+describe(`slow day ${day}`, () => {
     it('should work on samples for p2', () => {
         assert.equal(p2('3'), 1222153);
     }).timeout(20000);

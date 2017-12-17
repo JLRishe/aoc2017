@@ -45,7 +45,6 @@ const p1 = compose(
 
 // Generator [String] -> Number
 const findPeriod = compose(
-    call,
     genNth(1),
     genMap(head),
     genFilter(([,r]) => equals(r, dancers)),
@@ -61,7 +60,6 @@ const findTarget = compose(
 // [Instruction] -> String
 const p2 = compose(
     join(''),
-    call,
     converge(genNth, [findTarget, identity])
 );
 

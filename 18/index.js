@@ -1,5 +1,5 @@
 const ramda = require('ramda');
-const { __, compose, map, filter, merge, curry, prop, isEmpty, any, complement, add, multiply, modulo } = ramda;
+const { __, compose, map, filter, merge, curry, prop, isEmpty, any, complement, add, multiply, modulo, omit } = ramda;
 const { probe, applyPattern } = require('../shared');
 const { genTransform, genHead, genFilter } = require('func-generators');
 
@@ -12,27 +12,20 @@ const regValue = (regs, reg) => (reg in regs ? regs[reg] : 0);
 const resolveValue = (regs, value) =>
     !Number.isNaN(parseFloat(value)) ? Number(value) : regValue(regs, value);
 
-const moveNextInstruc = (action) => (state) => merge(action(state), { pos: state.pos + 1 });
-    
-const regUpdateInstruc = op => (x, y) => moveNextInstruc(({ regs, pos }) => ({
+const regUpdateInstruc = op => (x, y) => ({ regs, pos }) => ({
     regs: merge(regs, { [x]: op(regValue(regs, x), resolveValue(regs, y)) })
-}));
+});
     
 const instrucTypes = {
-    snd: (x) => moveNextInstruc(({ regs }) => ({ 
-        lastFreq: resolveValue(regs, x)
-    })),
+    snd: (x) => ({ regs }) => ({ lastFreq: resolveValue(regs, x) }),
     set: regUpdateInstruc((_, yVal) => yVal),
     add: regUpdateInstruc(add),
     mul: regUpdateInstruc(multiply),
     mod: regUpdateInstruc(modulo),
-    rcv: (x) => moveNextInstruc(({ regs, lastFreq }) => 
-        resolveValue(regs, x) != 0 ? { recovered: lastFreq } : { }
-    ),
+    rcv: (x) => ({ regs, lastFreq }) => 
+        resolveValue(regs, x) != 0 ? { recovered: lastFreq } : { },
     jgz: (x,y) => ({ regs, pos }) =>
-        resolveValue(regs, x) > 0
-            ? { pos: pos + resolveValue(regs, y) }
-            : { pos: pos + 1 }
+        resolveValue(regs, x) >  0 ? { posChange: resolveValue(regs, y) } : { }
 };
 
 const parseInstruc = instrucMap => compose(
@@ -42,8 +35,10 @@ const parseInstruc = instrucMap => compose(
 
 const runInstruc = curry((instrucs, state) => {
     const instruc = instrucs[state.pos];
+    const result = instruc(state);
+    const posChange = 'posChange' in result ? result.posChange : 1;
 
-    return merge(state, instruc(state));
+    return merge(state, merge(omit(['posChange'], result), { pos: state.pos + posChange }));
 });
 
 const executor = instrucs => genTransform(
@@ -62,19 +57,14 @@ const p1 = compose(
 
 
 const newInstrucTypes = merge(instrucTypes, {
-    snd: (x) => moveNextInstruc(({ regs, outQueue, sndCount }) => {
+    snd: (x) => ({ regs, outQueue, sndCount }) => {
         outQueue.push(resolveValue(regs, x));
         
         return { sndCount: sndCount + 1 };
-    }),
-    rcv: (x) => ({ inQueue, regs, pos }) => {
-        if (inQueue.length === 0) {
-            return { stopped: true };
-        }
-        const received = inQueue.shift();
-        
-        return { regs: merge(regs, { [x]: received }), stopped: false, pos: pos + 1 };
-    }
+    },
+    rcv: (x) => ({ inQueue, regs }) => isEmpty(inQueue)
+        ? { stopped: true, posChange: 0 }
+        : { regs: merge(regs, { [x]: inQueue.shift() }), stopped: false }
 });
 
 const newExecutor = curry((instrucs, inQueue, outQueue, p) => genTransform(

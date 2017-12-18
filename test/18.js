@@ -23,7 +23,16 @@ jgz a -2`;
         assert.equal(p1(sampleLines), 4);
     });
     
+const sampleLines2 = 
+`snd 1
+snd 2
+snd p
+rcv a
+rcv b
+rcv c
+rcv d`;
+    
     it('should work on samples for p2', () => {
-        throw new Error('not implemented');
+        assert.equal(p2(sampleLines2), 3);
     });
 });

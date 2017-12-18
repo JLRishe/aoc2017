@@ -3,17 +3,22 @@ const { __, compose, map, filter, merge, curry, prop, isEmpty, any, complement, 
 const { probe, applyPattern } = require('../shared');
 const { genTransform, genHead, genFilter } = require('func-generators');
 
-// State is { recovered: Number, lastFreq: Number, pos: Number, regs: {} }
+// Registers is { Number }
+// State is { recovered: Number, lastFreq: Number, pos: Number, regs: Registers }
 
-// { Number } -> String -> Number
+// Registers -> String -> Number
 const regValue = (regs, reg) => (reg in regs ? regs[reg] : 0);
 
-// { Number } -> String -> Number
+// Registers -> String -> Number
 const resolveValue = (regs, value) =>
     !Number.isNaN(parseFloat(value)) ? Number(value) : regValue(regs, value);
 
+// Registers -> String -> Number -> Registers
+const updateRegs = (regs, reg, value) => merge(regs, { [reg]: value });
+    
+// (Number -> Number -> Number) -> String -> String -> State -> StateUpdates
 const regUpdateInstruc = op => (x, y) => ({ regs, pos }) => ({
-    regs: merge(regs, { [x]: op(regValue(regs, x), resolveValue(regs, y)) })
+    regs: updateRegs(regs, x, op(regValue(regs, x), resolveValue(regs, y)))
 });
     
 const instrucTypes = {
@@ -63,8 +68,8 @@ const newInstrucTypes = merge(instrucTypes, {
         return { sndCount: sndCount + 1 };
     },
     rcv: (x) => ({ inQueue, regs }) => isEmpty(inQueue)
-        ? { stopped: true, posChange: 0 }
-        : { regs: merge(regs, { [x]: inQueue.shift() }), stopped: false }
+        ? { stopped: true , posChange: 0                                    }
+        : { stopped: false, regs     : updateRegs(regs, x, inQueue.shift()) }
 });
 
 const newExecutor = curry((instrucs, inQueue, outQueue, p) => genTransform(

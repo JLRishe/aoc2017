@@ -11,7 +11,7 @@
   "devDependencies": {},
   "scripts": {
     "test": "mocha -g \"^(?!slow)\" -R nyan",
-    "runday": "node -e \"require('./shared/runhelpers').runSolution(process.argv[1])\""
+    "runday": "node -e \"require('aoc-runner').runSolution(process.argv[1])\""
   },
   "repository": {
     "type": "git"

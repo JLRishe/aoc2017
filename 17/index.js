@@ -59,5 +59,4 @@ module.exports = {
     }
     , nextState
     , posTransformer
-    , Number
 };

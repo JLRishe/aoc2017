@@ -36,17 +36,17 @@ describe(`day ${day}`, () => {
     const assertP1 = assertNum(p1);
     
     it('should work for sample inputs', () => {
-        assertP1(1, 0);
-        assertP1(12, 3);
-        assertP1(23, 2);
-        assertP1(1024, 31);
+        assertP1('1', 0);
+        assertP1('12', 3);
+        assertP1('23', 2);
+        assertP1('1024', 31);
     });
     
     const assertP2 = assertNum(p2);
     
     it('should work for sample p2 inputs', () => {
-        assertP2(27, 54);
-        assertP2(26, 54);
-        assertP2(331, 351);
+        assertP2('27', 54);
+        assertP2('26', 54);
+        assertP2('331', 351);
     });
 });

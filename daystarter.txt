@@ -1,6 +1,6 @@
 const ramda = require('ramda');
 const { __, compose, map, filter } = ramda;
-const { probe } = require('../shared');
+const { probe } = require('aoc-helpers');
 
 const p1 = () => 0;
 

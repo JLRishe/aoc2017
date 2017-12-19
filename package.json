@@ -4,6 +4,7 @@
   "description": "",
   "main": "index.js",
   "dependencies": {
+    "aoc-helpers": "file:..\\aoc-helpers",
     "aoc-runner": "file:..\\aoc-runner",
     "func-generators": "file:..\\func-generators",
     "ramda": "^0.25.0"

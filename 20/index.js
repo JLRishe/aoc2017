@@ -1,5 +1,6 @@
 const ramda = require('ramda');
-const { __, compose, curry, map, filter, sortBy, head, sum, prop, zip, times, identity, min, flatten, values, groupBy, length, concat, reduce, last, unnest } = ramda;
+const { __, compose, curry, map, filter, sum, prop, times, identity, min, values, equals } = ramda;
+const { sortBy, head, last, zip, groupBy, length, unnest } = ramda;
 const { probe, applyPattern } = require('aoc-helpers');
 const { genTransform, genDrop, genHead } = require('func-generators');
 
@@ -19,12 +20,12 @@ const updateParticle = map(updateVector);
 // [Particles] -> [Particles]
 const updateParticles = map(updateParticle);
 
-// (Number, Number, Number) -> Particle
-const vector = (p, v, a) => ({ p: Number(p), v: Number(v), a: Number(a) });
+// (Number, Number, Number) -> Vectors
+const vectors = (p, v, a) => ({ p: Number(p), v: Number(v), a: Number(a) });
 
 // String -> Particle
 const parseParticle = compose(
-    ([,px,py,pz,vx,vy,vz,ax,ay,az]) => [vector(px,vx,ax), vector(py,vy,ay), vector(pz,vz,az)],
+    ([, px, py, pz, vx, vy, vz, ax, ay, az]) => [vectors(px, vx, ax), vectors(py, vy, ay), vectors(pz, vz, az)],
     applyPattern(/^p=<\s*(-?\d+),\s*(-?\d+),\s*(-?\d+)>, v=<\s*(-?\d+),\s*(-?\d+),\s*(-?\d+)>, a=<\s*(-?\d+),\s*(-?\d+),\s*(-?\d+)>/)
 );
 
@@ -35,7 +36,7 @@ const distFromOrigin = compose(
     map(prop('p'))
 );
 
-// ([Particles] -> [Particles]) -> Generator [Particles]
+// ([Particles] -> [Particles]) -> Particles -> Generator [Particles]
 const particleSimulator = update => particles => genTransform(
     update,
     particles
@@ -44,6 +45,8 @@ const particleSimulator = update => particles => genTransform(
 // [*] -> [[Number, *]]
 const number = arr => zip(times(identity, arr.length), arr);
 
+const p1StepCount = 1000;
+
 // [Particle] -> Number
 const p1 = compose(
     head,
@@ -51,14 +54,14 @@ const p1 = compose(
     sortBy(compose(distFromOrigin, last)),
     number,
     genHead,
-    genDrop(2000),
+    genDrop(p1StepCount),
     particleSimulator(updateParticles),
 );
 
 // [Particle] -> [Particle]
 const removeCollided = compose(
     unnest,
-    filter(g => g.length === 1),
+    filter(compose(equals(1), length)),
     values,
     groupBy(([{ p: px }, { p: py }, { p: pz }]) => [px, py, pz].join(','))
 );
@@ -69,11 +72,13 @@ const updateAndPrune = compose(
     updateParticles
 );
 
+const p2StepCount = 500;
+
 // [Particle] -> Number
 const p2 = compose(
     length,
     genHead,
-    genDrop(2000),
+    genDrop(p2StepCount),
     particleSimulator(updateAndPrune)
 );
 

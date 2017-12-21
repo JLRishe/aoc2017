@@ -1,24 +1,12 @@
 const ramda = require('ramda');
-const { __, compose, curry, map, filter, length, split, times, identity, values, reverse, call, sum, prop, memoizeWith } = ramda;
-const { splitEvery, zip, groupBy, head, unnest, last, contains, find, concat, join } = ramda;
-const { probe, toArray } = require('aoc-helpers');
+const { __, compose, curry, map, filter, length, split, reverse, call, sum, prop, memoizeWith } = ramda;
+const { splitEvery, unnest, contains, find, concat, join } = ramda;
+const { probe, toArray, invertArr, rotate2d } = require('aoc-helpers');
 const { genTransform, genDrop, genHead, genTake } = require('func-generators');
 
 // Cell is '#' | '.'
 // Grid is [[Cell]]
 // Transform is { size: Number, from: [Grid], to: Grid }
-
-// [*] -> [[Number, *]]
-const number = arr => zip(times(identity, arr.length), arr);
-
-// [[*]] -> [[*]]
-const invertArr = compose(
-    map(map(last)),
-    values,
-    groupBy(head),
-    unnest,
-    map(number)
-);
 
 // Number -> [Grid]
 const splitSubGrids = count => compose(
@@ -36,12 +24,6 @@ const splitGridsEvery = count => compose(
 const splitGrids = grids => length(grids) % 2 === 0
     ? splitGridsEvery(2)(grids)
     : splitGridsEvery(3)(grids);
-
-// Grid -> Grid
-const rotate2d = compose(
-    invertArr,
-    reverse
-);
 
 // Grid -> [Grid]
 const allRotations = compose(

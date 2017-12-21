@@ -2,6 +2,7 @@ const day = '21';
 const dayPath = `../${day}`;
 
 const assert = require('assert');
+const { map } = require('ramda');
 const { prepare } = require('aoc-runner');
 const dayContents = require(dayPath);
 const [p1, p2] = prepare(dayContents);
@@ -111,6 +112,8 @@ describe(`day ${day}`, () => {
     ];
     
     it('should work on samples', () => {
-        assert.equal(doExpansions(2, sampleLines), 12);
+        const transforms = map(parseLine, sampleLines);
+        
+        assert.equal(doExpansions(2, transforms), 12);
     });
 });

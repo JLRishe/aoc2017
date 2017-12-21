@@ -11,13 +11,18 @@ const { genTransform, genDrop, genHead, genTake } = require('func-generators');
 // [*] -> [[Number, *]]
 const number = arr => zip(times(identity, arr.length), arr);
 
-// Number -> [Grid]
-const splitSubGrids = count => compose(
+// [[*]] -> [[*]]
+const invertArr = compose(
     map(map(last)),
     values,
     groupBy(head),
     unnest,
-    map(number),
+    map(number)
+);
+
+// Number -> [Grid]
+const splitSubGrids = count => compose(
+    invertArr,
     map(splitEvery(count))
 );
 
@@ -34,12 +39,8 @@ const splitGrids = grids => length(grids) % 2 === 0
 
 // Grid -> Grid
 const rotate2d = compose(
-    map(map(last)),
-    values,
-    groupBy(head),
-    reverse,
-    unnest,
-    map(number)
+    invertArr,
+    reverse
 );
 
 // Grid -> [Grid]
@@ -65,11 +66,7 @@ const isMatch = curry((grid, { size, from }) =>
 // [Grid] -> [[Cell]]
 const combineGrids = compose(
     map(unnest),
-    map(map(last)),
-    values,
-    groupBy(head),
-    unnest,
-    map(number)
+    invertArr
 );
     
 // String -> Transform

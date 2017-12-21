@@ -5,7 +5,7 @@ const assert = require('assert');
 const { prepare } = require('aoc-runner');
 const dayContents = require(dayPath);
 const [p1, p2] = prepare(dayContents);
-const { splitGrids, parseLine, rotate2d, allRotations } = dayContents;
+const { splitGrids, parseLine, rotate2d, allRotations, isMatch, combineGrids, doExpansions } = dayContents;
 
 describe(`day ${day}`, () => {
     it('should split grids', () => {
@@ -20,9 +20,33 @@ describe(`day ${day}`, () => {
     
     it('should parse lines', () => {
         assert.deepEqual(
-            parseLine('../.. => .../#../#..'), 
+            parseLine('../*. => .../#../#..'), 
             { 
-              from: [['.', '.'], ['.','.']],
+              size: 2,
+              from: [[['.', '.'], 
+                      ['*', '.']],
+                      
+                     [['*', '.'], 
+                      ['.', '.']],
+                      
+                     [['.', '*'], 
+                      ['.', '.']],
+                      
+                     [['.', '.'], 
+                      ['.', '*']],
+
+                     [['.', '.'], 
+                      ['.', '*']],
+                      
+                     [['.', '.'], 
+                      ['*', '.']],
+                      
+                     [['*', '.'], 
+                      ['.', '.']],
+                      
+                     [['.', '*'], 
+                      ['.', '.']]],
+
               to: [['.','.','.'], ['#','.','.'], ['#','.','.']]
             }
         );
@@ -59,8 +83,35 @@ describe(`day ${day}`, () => {
         )
     });
     
+    it('should match', () => {
+        const parsed = parseLine('##./..#/##. => #.#./.#.#/##../.#.#');
+        
+        assert.ok(isMatch([['#','#','.'],
+                           ['.','.','#'],
+                           ['#','#','.']], parsed), 'same as original');
+        assert.ok(isMatch([['.','#','.'],
+                           ['#','.','#'],
+                           ['#','.','#']], parsed), 'rotated');
+        assert.equal(isMatch([['#','#','.'],
+                               ['.','.','#'],
+                               ['#','.','.']], parsed), false, 'should not match');
+                          
+    });
+    
+    it('should combine grids', () => {
+        assert.deepEqual(
+            combineGrids([[['.','#'],['#','.']], [['#','#'],['.','.']]]),
+            [['.','#','#','#'], ['#','.','.','.']]
+        );
+    })
+    
+    const sampleLines = [
+        '../.# => ##./#../...',
+        '.#./..#/### => #..#/..../..../#..#'
+    ];
+    
     it('should work on samples for p1', () => {
-        throw new Error('not implemented');
+        assert.equal(doExpansions(2, sampleLines), 12);
     });
     
     it('should work on samples for p2', () => {

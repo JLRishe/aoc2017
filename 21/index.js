@@ -1,5 +1,6 @@
 const ramda = require('ramda');
-const { __, compose, map, filter, length, split, splitEvery, zip, times, identity, groupBy, head, unnest, values, last, reverse, call } = ramda;
+const { __, compose, curry, map, filter, length, split, times, identity, values, reverse, call, sum, prop } = ramda;
+const { splitEvery, zip, groupBy, head, unnest, last, contains, find, concat } = ramda;
 const { probe, toArray } = require('aoc-helpers');
 const { genTransform, genDrop, genHead, genTake } = require('func-generators');
 
@@ -40,28 +41,75 @@ const allRotations = compose(
     genTake(4),
     genTransform(rotate2d)
 );
+
+const flip = map(reverse);
     
 const startGrid = [['.','#','.'], ['.','.','#'],['#','#','#']];
+
+const isMatch = curry((grid, { size, from }) => 
+    size === length(grid) && contains(grid, from)
+);
+
+const combineGrids = compose(
+    map(unnest),
+    map(map(last)),
+    values,
+    groupBy(head),
+    unnest,
+    map(number)
+);
     
 const parseLine = compose(
-    ([from, to]) => ({ from, to }),
+    ([from, to]) => ({ size: length(from), from: concat(allRotations(from), allRotations(flip(from))), to }),
     map(map(split(''))),
     map(split('/')),
     split(' => ')
 );
+
+const doReplacement = curry((transforms, grid) => compose(
+    prop('to'),
+    find(isMatch(grid))
+)(transforms));
+
+const expand = curry((transforms, grid) => compose(
+    unnest,
+    map(combineGrids),
+    map(map(doReplacement(transforms))),
+    splitGrids
+)(grid));
+
+const expander = lines => genTransform(
+    expand(map(parseLine, lines)),
+    startGrid
+);
+
+const countLights = compose(
+    sum,
+    map(length),
+    map(filter(c => c === '#'))
+);
+
+const doExpansions = curry((count, lines) => compose(
+    countLights,
+    genHead,
+    genDrop(count),
+    expander
+)(lines));
     
-const p1 = splitGrids(startGrid);
+const p1 = doExpansions(5);
 
 const p2 = () => 0;
 
 module.exports = {
     solution: {
         type: 'lines',
-        pre: parseLine,
         ps: [p1, p2]
     }
     , splitGrids
     , parseLine
     , rotate2d
     , allRotations
+    , isMatch
+    , combineGrids
+    , doExpansions
 };

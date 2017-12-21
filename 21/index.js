@@ -1,6 +1,6 @@
 const ramda = require('ramda');
-const { __, compose, curry, map, filter, length, split, times, identity, values, reverse, call, sum, prop } = ramda;
-const { splitEvery, zip, groupBy, head, unnest, last, contains, find, concat } = ramda;
+const { __, compose, curry, map, filter, length, split, times, identity, values, reverse, call, sum, prop, memoizeWith } = ramda;
+const { splitEvery, zip, groupBy, head, unnest, last, contains, find, concat, join } = ramda;
 const { probe, toArray } = require('aoc-helpers');
 const { genTransform, genDrop, genHead, genTake } = require('func-generators');
 
@@ -66,17 +66,20 @@ const parseLine = compose(
     split(' => ')
 );
 
-const doReplacement = curry((transforms, grid) => compose(
-    prop('to'),
-    find(isMatch(grid))
-)(transforms));
+const doReplacement = (transforms) => memoizeWith(
+    compose(join(''), unnest),
+    grid => compose(
+        prop('to'),
+        find(isMatch(grid))
+    )(transforms)
+);
 
-const expand = curry((transforms, grid) => compose(
+const expand = (transforms) => compose(
     unnest,
     map(combineGrids),
     map(map(doReplacement(transforms))),
     splitGrids
-)(grid));
+);
 
 const expander = lines => genTransform(
     expand(map(parseLine, lines)),
@@ -98,7 +101,7 @@ const doExpansions = curry((count, lines) => compose(
     
 const p1 = doExpansions(5);
 
-const p2 = () => 0;
+const p2 = doExpansions(18);
 
 module.exports = {
     solution: {

@@ -110,11 +110,7 @@ describe(`day ${day}`, () => {
         '.#./..#/### => #..#/..../..../#..#'
     ];
     
-    it('should work on samples for p1', () => {
+    it('should work on samples', () => {
         assert.equal(doExpansions(2, sampleLines), 12);
-    });
-    
-    it('should work on samples for p2', () => {
-        throw new Error('not implemented');
     });
 });

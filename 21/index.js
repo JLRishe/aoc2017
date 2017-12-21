@@ -1,7 +1,7 @@
 const ramda = require('ramda');
-const { __, compose, map, filter, length, split, splitEvery, zip, times, identity, groupBy, head, unnest, values, last, reverse } = ramda;
-const { probe } = require('aoc-helpers');
-const { genTransform, genDrop, genHead } = require('func-generators');
+const { __, compose, map, filter, length, split, splitEvery, zip, times, identity, groupBy, head, unnest, values, last, reverse, call } = ramda;
+const { probe, toArray } = require('aoc-helpers');
+const { genTransform, genDrop, genHead, genTake } = require('func-generators');
 
 // [*] -> [[Number, *]]
 const number = arr => zip(times(identity, arr.length), arr);
@@ -33,6 +33,13 @@ const rotate2d = compose(
     unnest,
     map(number)
 );
+
+const allRotations = compose(
+    toArray,
+    call,
+    genTake(4),
+    genTransform(rotate2d)
+);
     
 const startGrid = [['.','#','.'], ['.','.','#'],['#','#','#']];
     
@@ -56,4 +63,5 @@ module.exports = {
     , splitGrids
     , parseLine
     , rotate2d
+    , allRotations
 };

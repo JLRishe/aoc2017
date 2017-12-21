@@ -20,7 +20,7 @@ describe(`slow ${day}`, () => {
 
     it('should work on samples for p1', () => {
         assert.equal(p1(sampleInput), 8108);
-    }).timeout(10000);
+    }).timeout(20000);
 
     it('should work on samples for p2', () => {
         assert.equal(p2(sampleInput), 1242);

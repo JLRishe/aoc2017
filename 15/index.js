@@ -28,10 +28,10 @@ const runMatches = curry((pairCount, aGen, aStart, bGen, bStart) => compose(
     genMap(([, pair]) => pair),
     genZip(genTimes(pairCount)),
     genZip
-)(partial(aGen, [aStart]), partial(bGen, [bStart])));
+)(aGen(aStart), bGen(bStart)));
 
 // Number -> Gen Number -> Number -> Gen Number
-const pickyGenerator = (factor, baseGen) => genFilter(v => v % factor === 0, baseGen);
+const pickyGenerator = curry((factor, baseGen, start) => genFilter(v => v % factor === 0, baseGen(start)));
 
 // Number -> Gen Number
 const pickya = pickyGenerator(4, a);

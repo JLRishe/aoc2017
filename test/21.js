@@ -5,7 +5,7 @@ const assert = require('assert');
 const { prepare } = require('aoc-runner');
 const dayContents = require(dayPath);
 const [p1, p2] = prepare(dayContents);
-const { splitGrids, parseLine, rotate2d } = dayContents;
+const { splitGrids, parseLine, rotate2d, allRotations } = dayContents;
 
 describe(`day ${day}`, () => {
     it('should split grids', () => {
@@ -37,6 +37,26 @@ describe(`day ${day}`, () => {
                       ['.','.','#'],
                       ['#','#','.']]             
         );
+    });
+    
+    it('should produce all rotations', () => {
+        assert.deepEqual(
+            allRotations([['.','#','.'],
+                          ['#','.','#'],
+                          ['#','.','#']]),
+                        [[['.','#','.'],
+                          ['#','.','#'],
+                          ['#','.','#']],
+                         [['#','#','.'],
+                          ['.','.','#'],
+                          ['#','#','.']],
+                         [['#','.','#'],
+                          ['#','.','#'],
+                          ['.','#','.']],
+                         [['.','#','#'],
+                          ['#','.','.'],
+                          ['.','#','#']]]
+        )
     });
     
     it('should work on samples for p1', () => {

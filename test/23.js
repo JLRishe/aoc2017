@@ -17,8 +17,4 @@ sub a 3`;
     it('should work on samples for p1', () => {
         assert.equal(p1(sampleInput), 1);
     });
-    
-    it('should work on samples for p2', () => {
-        throw new Error('not implemented');
-    });
 });

@@ -10,7 +10,7 @@ const bridge = curry((piece, br) => ({ strength: piece.strength + br.strength, l
 const emptyBridge = { strength: 0, length: 0 };
 
 // (* -> *) -> [*] -> [*]
-const findMaxBy = curry((f, items) => compose(
+const findMaxesBy = curry((f, items) => compose(
     last,
     sortBy(compose(f, head)),
     values, 
@@ -25,7 +25,7 @@ const hasNum = curry((num, { a, b }) => a === num || b == num );
 // Number -> [Piece] -> [Bridge]
 const bridgesFrom = curry((selectionCriterion, num, pieces) => compose(
     defaultTo([]),
-    findMaxBy(selectionCriterion),
+    findMaxesBy(selectionCriterion),
     chain(bridgesFromPiece(selectionCriterion, pieces, num)),
     filter(hasNum(num))
 )(pieces));
@@ -35,7 +35,6 @@ const otherSide = ({ a, b }, num) => a === num ? b : a;
 
 // [Piece] -> Number -> Piece -> [Bridge]
 const bridgesFromPiece = curry((selectionCriterion, pieces, num, piece) => compose(
-    findMaxBy(selectionCriterion),
     map(bridge(piece)),
     concat([emptyBridge]),
     bridgesFrom(selectionCriterion, otherSide(piece, num)),

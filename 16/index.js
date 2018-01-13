@@ -48,7 +48,7 @@ const findPeriod = compose(
     genNth(1),
     genMap(head),
     genFilter(([,r]) => equals(r, dancers)),
-    genZip(genInfinite)
+    genZip(genInfinite())
 );
 
 // Generator [String] -> Number

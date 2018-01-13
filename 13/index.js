@@ -26,7 +26,7 @@ const p1 = compose(
 const p2 = scanners => compose(
     genHead,
     genFilter(compose(none(__, scanners), isHit)),
-)(genInfinite);
+)(genInfinite());
 
 module.exports = {
     solution: {

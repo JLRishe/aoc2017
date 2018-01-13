@@ -6,7 +6,7 @@
   "dependencies": {
     "aoc-helpers": "file:..\\aoc-helpers",
     "aoc-runner": "file:..\\aoc-runner",
-    "func-generators": "file:..\\func-generators",
+    "func-generators": "0.0.1",
     "ramda": "^0.25.0"
   },
   "devDependencies": {},
